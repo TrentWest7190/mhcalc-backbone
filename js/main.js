@@ -1,15 +1,27 @@
-var AppView = Backbone.View.extend({
-	el: '#container',
+var WeaponType = Backbone.Model.extend();
 
-	template:_.template("<h3>Hello <%= who %></h3>"),
+var WeaponTypeCollection = Backbone.Collection.extend({
+	url: "/data/weaponType.json",
+	model: WeaponType,
+});
 
+var weaponTypeCollection = new WeaponTypeCollection();
+
+var WeaponTypeView = Backbone.View.extend({
+	el: "#test-div",
+	template: _.template($("#weapon-type-template").html()),
 	initialize: function() {
-		this.render();
+		var that = this;
+		this.collection.fetch({
+			success: function() {
+				that.render();
+			}
+		});
 	},
 
 	render: function() {
-		this.$el.html(this.template({who: 'world!'}));
+		this.$el.html(this.template({ weaponTypes: this.collection.toJSON()}));
 	}
 });
 
-var appView = new AppView();
+var view = new WeaponTypeView({ collection: weaponTypeCollection});
