@@ -28,7 +28,6 @@ function initCollections() {
 	});
 
 	Calculator.Collections.WeaponCollection = Backbone.Collection.extend({
-		url: "/data/weaponData.json",
 		model: Calculator.Models.Weapon
 	});
 }
@@ -44,7 +43,15 @@ function initViews() {
 
 		selectWeaponType: function(event) {
 			var weaponTypeID = event.target.value;
+			weaponTypeID = "1";
+			var weaponName = "";
+			switch(weaponTypeID) {
+				case "1":
+					weaponName = "Greatswords";
+					break;
+			}
 			var weaponCollection = new Calculator.Collections.WeaponCollection();
+			weaponCollection.url = "/data/weapons/"+weaponName+".json";
 			weaponView = new Calculator.Views.WeaponView({ collection: weaponCollection});
 		},
 
@@ -76,6 +83,11 @@ function initViews() {
 
 		render: function() {
 			this.$el.html(this.template({ weapons: this.collection.toJSON()}));
-		},
+		}
 	});
+}
+
+errorHandler = function(collection, response){
+   errorText = response.status+': '+response.statusText
+   collection.trigger('httpError', response, errorText)
 }
