@@ -11,6 +11,7 @@
 <body>
 	<div id = "type-dd"></div>
 	<div id = "weapon-dd"></div>
+    <div id = "level-dd"></div>
     <script type="text/template" id="weapon-type-template">
     	<select id="weapon-type-select">
     		<option value = "0"></option>
@@ -26,6 +27,14 @@
     		<option value= "<%= weapon.id %>"><%= weapon.strings[0].name %></option>
     		<% }); %>
     	</select>
+    </script>
+    <script type="text/template" id="weapon-level-template">
+        <select id="weapon-level-select">
+            <option value="0"></option>
+            <% _.each(levels, function(level) { %>
+            <option value= "<%= level.id %>">Level <%= level.level %></option>
+            <% }); %>
+        </select>
     </script>
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
