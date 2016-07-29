@@ -16,10 +16,15 @@ var weaponTypeCollection = new Calculator.Collections.WeaponTypeCollection();
 
 var view = new Calculator.Views.WeaponTypeView({ collection: weaponTypeCollection});
 
+var testModel = new Calculator.Models.Modifier({ name: "test"});
+
+var testview = new Calculator.Views.ModifierView({ model: testModel});
+
 function initModels() {
 	Calculator.Models.WeaponType = Backbone.Model.extend();
 	Calculator.Models.Weapon = Backbone.Model.extend();
 	Calculator.Models.Level = Backbone.Model.extend();
+	Calculator.Models.Modifier = Backbone.Model.extend();
 }
 
 function initCollections() {
@@ -35,6 +40,10 @@ function initCollections() {
 	Calculator.Collections.WeaponLevelCollection = Backbone.Collection.extend({
 		model: Calculator.Models.Level
 	});
+
+	Calculator.Collections.ModifierGroupCollection = Backbone.Collection.extend({
+		model: Calculator.Models.Modifier
+	})
 }
 
 function initViews() {
@@ -117,4 +126,17 @@ function initViews() {
 			this.$el.html(this.template({ levels: this.collection.toJSON()}));
 		}
 	});
+
+	Calculator.Views.ModifierView = Backbone.View.extend({
+		el: "#modtest",
+		template: _.template($("#modifier-template").html()),
+		initialize: function() {
+			this.render();
+		},
+
+		render: function() {
+			console.log(this.model.toJSON());
+			this.$el.html(this.template({modifier: this.model.toJSON()}));
+		}
+	})
 }

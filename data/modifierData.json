@@ -1,0 +1,28 @@
+[{
+	"group": "A",
+	"modifiers": [{
+		"id":1,
+		"name":"Powercharm",
+		"modifier":[6,0]
+	}]
+},
+{
+	"group": "B",
+	"modifiers": [{
+		"id":2,
+		"name":"Powertalon",
+		"modifier":[9,0]
+	}]
+},
+{
+	"group": "C",
+	"modifiers": [{
+		"id":3,
+		"name":"Demondrug",
+		"modifier":[5,0]
+	}, {
+		"id":4,
+		"name":"Mega Demondrug",
+		"modifier":[7,0]
+	}]
+}]
