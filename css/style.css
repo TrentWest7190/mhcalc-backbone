@@ -1,0 +1,16 @@
+body {
+	font-size: 12px;
+}
+
+h3 {
+	font-size: 15px;
+	text-decoration: underline;
+}
+
+#modifiers {
+	width: 110vh;
+}
+
+#weaponDiv {
+	width: 60vh;
+}

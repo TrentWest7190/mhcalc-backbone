@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>MHGen Damage Calculator</title>
     <meta name="description" content="" />
     <meta name="author" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" Href="/css/style.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </head>
 <body>
-	<div id = "type-dd"></div>
-	<div id = "weapon-dd"></div>
-    <div id = "level-dd"></div>
-    <div id = "modifiers"></div>
-    <div id = "modtest"></div>
+	<div id = "weaponDiv" class="container-fluid">
+		<div>
+			<div id = "type-dd" class="col-md-4"></div>
+			<div id = "weapon-dd" class="col-md-4"></div>
+		    <div id = "level-dd" class="col-md-4"></div>
+	    </div>
+    </div>
+    <div id = "weapon-info"></div>
+    <div id = "modifiers" class="container-fluid"></div>
     <script type="text/template" id="weapon-type-template">
     	<select id="weapon-type-select">
     		<option value = "0"></option>
@@ -39,11 +45,21 @@
         </select>
     </script>
     <script type="text/template" id="modifier-template">
-        <%= modifier.name %>
+    	<div class="col-md-3">
+        <h3>Group <%= group %></h3>
+        <% _.each(modifiers, function(mod) { %>
+        <%= mod.name %> <input type="checkbox" value="<%= mod.modifier %>"><br>
+        <% }); %>
+        </div>
+    </script>
+    <script type="text/template" id="weapon-info-template">
+    	Attack: <%= attack %>
+    	Affinity: <%= affinity %>%
     </script>
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.0/backbone-min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.5.6/backbone.marionette.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
 </body>
 

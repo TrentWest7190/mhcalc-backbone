@@ -16,15 +16,23 @@ var weaponTypeCollection = new Calculator.Collections.WeaponTypeCollection();
 
 var view = new Calculator.Views.WeaponTypeView({ collection: weaponTypeCollection});
 
-var testModel = new Calculator.Models.Modifier({ name: "test"});
+var modifierGroupCollection = new Calculator.Collections.ModifierGroupCollection();
+modifierGroupCollection.fetch({
+	success: function() {
+		var modifierCollectionView = new Calculator.Views.ModifierCollectionView({ collection: modifierGroupCollection});
+		modifierCollectionView.render();
+		$("#modifiers").append(modifierCollectionView.el);
+	}
+})
 
-var testview = new Calculator.Views.ModifierView({ model: testModel});
+
 
 function initModels() {
 	Calculator.Models.WeaponType = Backbone.Model.extend();
 	Calculator.Models.Weapon = Backbone.Model.extend();
 	Calculator.Models.Level = Backbone.Model.extend();
-	Calculator.Models.Modifier = Backbone.Model.extend();
+	Calculator.Models.ModifierGroup = Backbone.Model.extend();
+	Calculator.Models.WeaponInfo = Backbone.Model.extend();
 }
 
 function initCollections() {
@@ -42,8 +50,9 @@ function initCollections() {
 	});
 
 	Calculator.Collections.ModifierGroupCollection = Backbone.Collection.extend({
-		model: Calculator.Models.Modifier
-	})
+		url: "/data/modifierData.json",
+		model: Calculator.Models.ModifierGroup
+	});
 }
 
 function initViews() {
@@ -117,6 +126,20 @@ function initViews() {
 	Calculator.Views.LevelView = Backbone.View.extend({
 		el: "#level-dd",
 		template: _.template($("#weapon-level-template").html()),
+
+		events: {
+			"change #weapon-level-select": "selectLevel"
+		},
+
+		selectLevel: function(event) {
+			var weaponLevelID = event.target.value;
+			var weaponInfo = _.find(this.collection.toJSON(), function(weaponLevel) {
+				return weaponLevel.id == weaponLevelID;
+			});
+			var weaponInfoModel = new Calculator.Models.WeaponInfo(weaponInfo);
+			var weaponInfoView = new Calculator.Views.WeaponInfoView({ model: weaponInfoModel});
+		},
+
 		initialize: function() {
 			this.render();
 		},
@@ -127,16 +150,25 @@ function initViews() {
 		}
 	});
 
-	Calculator.Views.ModifierView = Backbone.View.extend({
-		el: "#modtest",
-		template: _.template($("#modifier-template").html()),
+	Calculator.Views.WeaponInfoView = Backbone.View.extend({
+		el: "#weapon-info",
+		template: _.template($("#weapon-info-template").html()),
+
 		initialize: function() {
 			this.render();
 		},
 
 		render: function() {
 			console.log(this.model.toJSON());
-			this.$el.html(this.template({modifier: this.model.toJSON()}));
+			this.$el.html(this.template(this.model.toJSON()));
 		}
-	})
+	});
+
+	Calculator.Views.ModifierGroupView = Marionette.ItemView.extend({
+		template: _.template($("#modifier-template").html())
+	});
+
+	Calculator.Views.ModifierCollectionView = Marionette.CollectionView.extend({
+		childView: Calculator.Views.ModifierGroupView
+	});
 }
