@@ -18,6 +18,7 @@
 		    <div id = "level-dd" class="col-md-4"></div>
 	    </div>
     </div>
+    <div id = "testtest"></div>
     <div id = "weapon-info"></div>
     <div id = "modifiers" class="container-fluid"></div>
     <script type="text/template" id="weapon-type-template">
@@ -48,7 +49,8 @@
     	<div class="col-md-3">
         <h3>Group <%= group %></h3>
         <% _.each(modifiers, function(mod) { %>
-        <%= mod.name %> <input type="checkbox" value="<%= mod.modifier %>"><br>
+        <input type="radio" name="<%= group %>" value="<%= mod.modifier %>"><%= mod.name %> 
+        <br>
         <% }); %>
         </div>
     </script>

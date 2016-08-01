@@ -19,9 +19,11 @@ var view = new Calculator.Views.WeaponTypeView({ collection: weaponTypeCollectio
 var modifierGroupCollection = new Calculator.Collections.ModifierGroupCollection();
 modifierGroupCollection.fetch({
 	success: function() {
-		var modifierCollectionView = new Calculator.Views.ModifierCollectionView({ collection: modifierGroupCollection});
-		modifierCollectionView.render();
-		$("#modifiers").append(modifierCollectionView.el);
+		_.each(modifierGroupCollection.toJSON(), function(modGroup) {
+			var modifierGroup = new Calculator.Models.ModifierGroup(modGroup);
+
+		});
+
 	}
 })
 
@@ -31,7 +33,13 @@ function initModels() {
 	Calculator.Models.WeaponType = Backbone.Model.extend();
 	Calculator.Models.Weapon = Backbone.Model.extend();
 	Calculator.Models.Level = Backbone.Model.extend();
-	Calculator.Models.ModifierGroup = Backbone.Model.extend();
+	Calculator.Models.ModifierGroup = Backbone.Model.extend({
+		parse: function(group) {
+			group.modifiers = new Calculator.Collections.Modifiers(group.modifiers);
+			return group;
+		}
+	});
+	Calculator.Models.Modifier = Backbone.Model.extend();
 	Calculator.Models.WeaponInfo = Backbone.Model.extend();
 }
 
@@ -52,6 +60,17 @@ function initCollections() {
 	Calculator.Collections.ModifierGroupCollection = Backbone.Collection.extend({
 		url: "/data/modifierData.json",
 		model: Calculator.Models.ModifierGroup
+	});
+
+	Calculator.Collections.Modifiers = Backbone.Collection.extend({
+		model: Calculator.Models.Modifier,
+
+		initialize: function(modifiers) {
+			console.log(modifiers);
+			var modifiersView = new Calculator.Views.ModifiersView({ collection: modifiers });
+			modifiersView.render();
+			$("#testtest").append(modifiersView.el);
+		}
 	});
 }
 
@@ -154,21 +173,46 @@ function initViews() {
 		el: "#weapon-info",
 		template: _.template($("#weapon-info-template").html()),
 
-		initialize: function() {
-			this.render();
-		},
-
 		render: function() {
 			console.log(this.model.toJSON());
 			this.$el.html(this.template(this.model.toJSON()));
 		}
 	});
 
-	Calculator.Views.ModifierGroupView = Marionette.ItemView.extend({
-		template: _.template($("#modifier-template").html())
+	Calculator.Views.ModifiersView = Backbone.View.extend({
+		initialize: function() {
+			console.log(this.collection);
+			_.bindAll(this, "renderItem");
+		},
+
+		renderItem: function(modifier) {
+			console.log("rendering modifier", modifier);
+			var modifierView = new Calculator.Views.ModifierView({ model: modifier });
+			modifierView.render();
+			this.$el.append(modifierView.el);
+		},
+
+		render: function() {
+			console.log("render ModifiersView");
+			if (this.collection.length > 1)
+				this.collection.each(this.renderItem);
+			else
+				this.renderItem(this.collection);
+		}
 	});
 
-	Calculator.Views.ModifierCollectionView = Marionette.CollectionView.extend({
-		childView: Calculator.Views.ModifierGroupView
+	Calculator.Views.ModifierView = Backbone.View.extend({
+
+		events: {
+			"click":"displayModInfo"
+		},
+
+		displayModInfo: function() {
+			console.log("clicked " + this.model.name + "\n");
+		},
+
+		render: function() {
+			this.$el.append(this.model.name+"<br>");
+		}
 	});
 }
