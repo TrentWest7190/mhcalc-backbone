@@ -9,6 +9,8 @@ h3 {
 
 #modifiers {
 	width: 110vh;
+	overflow-y:scroll;
+	height: 40vh;
 }
 
 #weaponDiv {

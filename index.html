@@ -18,9 +18,12 @@
 		    <div id = "level-dd" class="col-md-4"></div>
 	    </div>
     </div>
-    <div id = "testtest"></div>
     <div id = "weapon-info"></div>
     <div id = "modifiers" class="container-fluid"></div>
+    <div id = "buttons">
+        <button id = "compareClass">Compare Weapon Class</button>
+    </div>
+    <div id = "displayTable"></div>
     <script type="text/template" id="weapon-type-template">
     	<select id="weapon-type-select">
     		<option value = "0"></option>
@@ -46,22 +49,45 @@
         </select>
     </script>
     <script type="text/template" id="modifier-template">
-    	<div class="col-md-3">
-        <h3>Group <%= group %></h3>
-        <% _.each(modifiers, function(mod) { %>
-        <input type="radio" name="<%= group %>" value="<%= mod.modifier %>"><%= mod.name %> 
-        <br>
-        <% }); %>
-        </div>
+        <input type="checkbox" class="group<%= groupName %>CB" name="Group <%= groupName %>" value="<%= modifier %>"><%= name %> 
+    </script>
+    <script type="text/template" id="table-template">
+        <input class="search" placeholder="Search" />
+        <button class="sort" data-sort="calcAttack">Sort by Attack</button>
+        <table class="table-condensed">
+            <tr>
+                <th>Name</th>
+                <th>Attack</th>
+                <th>Affinity</th>
+                <th>Calculated Attack</th>
+                <th>Element</th>
+            </tr>
+            <tbody class="list">
+            <% _.each(weaponInfo, function(weapon) { %>
+            <tr>
+                <td class="name"><%= weapon.weaponName %></td>
+                <td class="attack"><%= weapon.attack %></td>
+                <td class="affinity"><%= weapon.affinity %></td>
+                <td class="calcAttack"><%= weapon.calcAttack %></td>
+                <td class="element">
+                <% _.each(weapon.element, function(subElement) { %>
+                <%= subElement.value %> <%= subElement.elementName %><br>
+                <% }); %>
+                </td>
+            </tr>
+            <% }); %>
+            </tbody>
+        </table>
     </script>
     <script type="text/template" id="weapon-info-template">
     	Attack: <%= attack %>
     	Affinity: <%= affinity %>%
     </script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.0/backbone-min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.5.6/backbone.marionette.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.2.0/list.min.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
 </body>
 

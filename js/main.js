@@ -2,11 +2,84 @@ var Calculator = {
 	Models : {},
 	Collections : {},
 	Views : {},
+	modifierValues: {}, //a very, very simple implemenation of a hashmap to hold modifier values
+	selectedWeapons: {},
 
 	init : function() {
 		initModels();
 		initCollections();
 		initViews();
+	},
+
+	//calculates the end attack and affinity values of an array of kiranico weapon objects using the modifier object passed in
+	calculate: function(kiranicoWeaponArray, modifiersObject) {
+		var mappedWeapons = this.mapWeapons(kiranicoWeaponArray);
+		var modifierArray = this.createModArray(modifiersObject);
+
+		//for each weapon in the weapon array
+		var finalWeaponValues = _.map(mappedWeapons, function(weapon) {
+			//for each modifier in the modifier array
+			_.each(modifierArray, function(modifier) {
+				if (modifier != null) {
+					weapon.attack += modifier[0];
+					weapon.affinity += modifier[1];
+					if (modifier[2]) weapon.attack = weapon.attack * modifier[2];
+				}
+			});
+
+			weapon.calcAttack = weapon.attack + (weapon.attack * .25 * (weapon.affinity/100));
+
+			return weapon;
+		});
+		console.log("calculate weapon array ", finalWeaponValues);
+		return finalWeaponValues;
+	},
+
+	//Map an array of kiranico weapon objects into an array of calculator weapon objects
+	mapWeapons: function(weaponArray) {
+		var returnArray = [];
+		_.each(weaponArray, function(weapon) {
+			var weaponName = weapon.name;
+			_.each(weapon.levels, function(level) {
+				var returnObject = {};
+				returnObject.weaponName = weaponName + " - level " + level.level;
+				returnObject.attack = level.attack;
+				returnObject.affinity = level.affinity;
+				returnObject.element = Calculator.getElementData(level.elements);
+				returnArray.push(returnObject);
+			});
+		});
+		return returnArray;
+	},
+
+	createModArray: function(modifiersObject) {
+		var modifiersArray = [];
+
+		_.mapObject(modifiersObject, function(val, key) {
+			modifiersArray.push(val);
+		});
+
+		console.log("Created modifier array \n", modifiersArray);
+		return modifiersArray;
+	},
+
+	getElementData: function(elements) {
+		var elementData = [];
+
+		_.each(elements, function(element) {
+			var singleElement = {};
+			singleElement.elementName = Calculator.getElementName(element.pivot.element_id);
+			singleElement.value = element.pivot.value;
+			elementData.push(singleElement);
+		});
+
+		return elementData;
+	},
+
+	getElementName: function(elementID) {
+		var elements = ["Fire", "Water", "Thunder", "Dragon", "Ice", "Poison", "Para", "Sleep", "Blast"];
+		var elementName = elements[elementID];
+		return elementName
 	}
 };
 
@@ -21,11 +94,12 @@ modifierGroupCollection.fetch({
 	success: function() {
 		_.each(modifierGroupCollection.toJSON(), function(modGroup) {
 			var modifierGroup = new Calculator.Models.ModifierGroup(modGroup);
-
 		});
 
 	}
 })
+
+var buttonView = new Calculator.Views.ButtonView();
 
 
 
@@ -36,6 +110,10 @@ function initModels() {
 	Calculator.Models.ModifierGroup = Backbone.Model.extend({
 		parse: function(group) {
 			group.modifiers = new Calculator.Collections.Modifiers(group.modifiers);
+			group.modifiers.addGroup(group.group);
+			var modifiersView = new Calculator.Views.ModifiersView({ collection: group.modifiers });
+			modifiersView.render();
+			$("#modifiers").append(modifiersView.el);
 			return group;
 		}
 	});
@@ -65,11 +143,12 @@ function initCollections() {
 	Calculator.Collections.Modifiers = Backbone.Collection.extend({
 		model: Calculator.Models.Modifier,
 
-		initialize: function(modifiers) {
-			console.log(modifiers);
-			var modifiersView = new Calculator.Views.ModifiersView({ collection: modifiers });
-			modifiersView.render();
-			$("#testtest").append(modifiersView.el);
+		addGroup: function(groupID) {
+			this.group = groupID;
+		},
+
+		getGroup: function() {
+			return this.group;
 		}
 	});
 }
@@ -85,12 +164,42 @@ function initViews() {
 
 		selectWeaponType: function(event) {
 			var weaponTypeID = event.target.value;
-			weaponTypeID = "1";
 			var weaponName = "";
 			switch(weaponTypeID) {
 				case "1":
 					weaponName = "Greatswords";
 					break;
+				case "2":
+					weaponName = "Longswords";
+					break;
+				case "3":
+					weaponName = "SwordAndShields";
+					break;
+				case "4":
+					weaponName = "DualBlades";
+					break;
+				case "5":
+					weaponName = "Hammers";
+					break;
+				case "6":
+					weaponName = "HuntingHorns";
+					break;
+				case "7":
+					weaponName = "Lances";
+					break;
+				case "8":
+					weaponName = "Gunlances";
+					break;
+				case "9":
+					weaponName = "SwitchAxes";
+					break;
+				case "10":
+					weaponName = "ChargeBlades";
+					break;
+				case "11":
+					weaponName = "InsectGlaives";
+					break;
+
 			}
 			var weaponCollection = new Calculator.Collections.WeaponCollection();
 			weaponCollection.url = "/data/weapons/"+weaponName+".json";
@@ -132,6 +241,7 @@ function initViews() {
 			var that = this;
 			this.collection.fetch({
 				success: function() {
+					Calculator.selectedWeapons = that.collection.toJSON();
 					that.render();
 				}
 			});
@@ -164,7 +274,6 @@ function initViews() {
 		},
 
 		render: function() {
-			console.log(this.collection.toJSON());
 			this.$el.html(this.template({ levels: this.collection.toJSON()}));
 		}
 	});
@@ -174,45 +283,85 @@ function initViews() {
 		template: _.template($("#weapon-info-template").html()),
 
 		render: function() {
-			console.log(this.model.toJSON());
 			this.$el.html(this.template(this.model.toJSON()));
 		}
 	});
 
 	Calculator.Views.ModifiersView = Backbone.View.extend({
+		//className: "col-md-3",
 		initialize: function() {
-			console.log(this.collection);
 			_.bindAll(this, "renderItem");
 		},
 
 		renderItem: function(modifier) {
-			console.log("rendering modifier", modifier);
+			modifier.set("groupName", this.collection.getGroup());
 			var modifierView = new Calculator.Views.ModifierView({ model: modifier });
 			modifierView.render();
 			this.$el.append(modifierView.el);
 		},
 
 		render: function() {
-			console.log("render ModifiersView");
-			if (this.collection.length > 1)
-				this.collection.each(this.renderItem);
-			else
-				this.renderItem(this.collection);
+			this.$el.append("<h3>"+this.collection.getGroup()+"</h3>");
+			this.collection.each(this.renderItem);
 		}
 	});
 
 	Calculator.Views.ModifierView = Backbone.View.extend({
+		template: _.template($("#modifier-template").html()),
 
 		events: {
-			"click":"displayModInfo"
+			"click input[type=checkbox]":"setChecked"
 		},
 
-		displayModInfo: function() {
-			console.log("clicked " + this.model.name + "\n");
+		setChecked: function(event) {
+			
+			var selected = $(event.target).is(":checked");
+			$(".group"+this.model.get("groupName")+"CB").prop('checked',false);
+			if (selected) {
+				console.log("setting", this.model.get("groupName"), "to", this.model.get("modifier"));
+				$(event.target).prop('checked',true);
+				Calculator.modifierValues[this.model.get("groupName")] = this.model.get("modifier");
+			} else {
+				console.log("removing", this.model.get("groupName"));
+				Calculator.modifierValues[this.model.get("groupName")] = null;
+			}
+
 		},
 
 		render: function() {
-			this.$el.append(this.model.name+"<br>");
+			this.$el.append(this.template(this.model.toJSON()));
+		}
+	});
+
+	Calculator.Views.ButtonView = Backbone.View.extend({
+		el: "#buttons",
+
+		events: {
+			"click #compareClass": "compareClass"
+		},
+
+		compareClass: function() {
+			var weaponClassValues = Calculator.calculate(Calculator.selectedWeapons, Calculator.modifierValues);
+			var weaponClassView = new Calculator.Views.WeaponTableView({ collection: weaponClassValues});
+		}
+
+	});
+
+	Calculator.Views.WeaponTableView = Backbone.View.extend({
+		el: "#displayTable",
+		template: _.template($("#table-template").html()),
+
+		initialize: function() {
+			
+			this.render();
+		},
+
+		render: function() {
+			this.$el.html(this.template({ weaponInfo: this.collection }));
+			var options = {
+				valueNames: [ "name", "attack", "affinity", "calcAttack"]
+			};
+			var weaponList = new List("displayTable", options);
 		}
 	});
 }
