@@ -4,6 +4,7 @@ var Calculator = {
 	Views : {},
 	modifierValues: {}, //a very, very simple implemenation of a hashmap to hold modifier values
 	selectedWeapons: {},
+	sharpnessValue: 0,
 
 	init : function() {
 		initModels();
@@ -331,6 +332,10 @@ function initViews() {
 		render: function() {
 			this.$el.append(this.template(this.model.toJSON()));
 		}
+	});
+
+	Calculator.Views.SharpnessView = Backbone.View.extend({
+
 	});
 
 	Calculator.Views.ButtonView = Backbone.View.extend({
