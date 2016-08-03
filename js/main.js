@@ -181,7 +181,7 @@ function initModels() {
 
 function initCollections() {
 	Calculator.Collections.WeaponTypeCollection = Backbone.Collection.extend({
-		url: "/data/weaponType.json",
+		url: "data/weaponType.json",
 		model: Calculator.Models.WeaponType
 	});
 
@@ -194,7 +194,7 @@ function initCollections() {
 	});
 
 	Calculator.Collections.ModifierGroupCollection = Backbone.Collection.extend({
-		url: "/data/modifierData.json",
+		url: "data/modifierData.json",
 		model: Calculator.Models.ModifierGroup
 	});
 
@@ -260,7 +260,7 @@ function initViews() {
 
 			}
 			var weaponCollection = new Calculator.Collections.WeaponCollection();
-			weaponCollection.url = "/data/weapons/"+weaponName+".json";
+			weaponCollection.url = "data/weapons/"+weaponName+".json";
 			weaponView = new Calculator.Views.WeaponView({ collection: weaponCollection});
 		},
 

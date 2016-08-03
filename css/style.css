@@ -12,11 +12,6 @@ h1 {
 	text-align: center;
 }
 
-#weapon-type-dd {
-	float: left;
-	width: 50%;
-}
-
 #modifiers {
 	width: 110vh;
 	height: 40vh;
