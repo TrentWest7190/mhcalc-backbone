@@ -1,5 +1,6 @@
 body {
 	font-size: 12px;
+	background-color: #EBEBEB;
 }
 
 h3 {
@@ -38,6 +39,11 @@ h1 {
 #sortAndSearch *{
 	display: block;
 	margin: 0 auto;
+}
+
+#displayTable {
+	margin: 0;
+	border: 0;
 }
 
 .table-condensed {
