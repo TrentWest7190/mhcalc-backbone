@@ -123,7 +123,7 @@ var Calculator = {
 
 	getElementName: function(elementID) {
 		var elements = ["Fire", "Water", "Thunder", "Dragon", "Ice", "Poison", "Para", "Sleep", "Blast"];
-		var elementName = elements[elementID];
+		var elementName = elements[elementID-1];
 		return elementName
 	},
 
