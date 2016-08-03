@@ -5,14 +5,90 @@ body {
 h3 {
 	font-size: 15px;
 	text-decoration: underline;
+	margin: 0px;
+}
+
+h1 {
+	text-align: center;
+}
+
+#weapon-type-dd {
+	float: left;
+	width: 50%;
 }
 
 #modifiers {
 	width: 110vh;
-	overflow-y:scroll;
 	height: 40vh;
+}
+
+#sharpnessDiv {
+	width: 110vh;
+}
+
+#sharpnessDiv div {
+	float: left;
+	width: 50%;
 }
 
 #weaponDiv {
 	width: 60vh;
+}
+
+#buttons {
+	margin: auto;
+	width: 25%;
+}
+
+#sortAndSearch *{
+	display: block;
+	margin: 0 auto;
+}
+
+.table-condensed {
+	width:50%; 
+    margin-left:25%; 
+    margin-right:25%;
+}
+
+th {
+	text-align: center;
+}
+
+td {
+	text-align: center;
+}
+
+.sharpness-bar {
+	min-width: 82px;
+}
+
+.sharpness-bar .red {
+    background-color: #c00c38;
+}
+
+.sharpness-bar .orange {
+    background-color: #e85018;
+}
+
+.sharpness-bar .yellow {
+    background-color: #f0c830;
+}
+
+.sharpness-bar .green {
+    background-color: #58d000;
+}
+
+.sharpness-bar .blue {
+    background-color: #3068e8;
+}
+
+.sharpness-bar .white {
+    background-color: #f0f0f0;
+}
+
+.sharpness-bar span {
+    display: inline-block;
+    height: 100%;
+    float: left;
 }

@@ -147,6 +147,6 @@
 	"modifiers": [{
 		"id":25,
 		"name":"Repeat Offender",
-		"modifier":"Chain crit"
+		"modifier":[0,30]
 	}]
 }]

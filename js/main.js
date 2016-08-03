@@ -5,6 +5,8 @@ var Calculator = {
 	modifierValues: {}, //a very, very simple implemenation of a hashmap to hold modifier values
 	selectedWeapons: {},
 	sharpnessValue: 0,
+	minSharpnessValue: 5,
+	maxLevelOnly: false,
 
 	init : function() {
 		initModels();
@@ -28,7 +30,9 @@ var Calculator = {
 				}
 			});
 
-			weapon.calcAttack = weapon.attack + (weapon.attack * .25 * (weapon.affinity/100));
+			var attackNoSharpness = weapon.attack + (weapon.attack * .25 * (weapon.affinity/100));
+
+			weapon.calcAttack = Calculator.calculateDamage(attackNoSharpness, weapon.sharpness)
 
 			return weapon;
 		});
@@ -36,18 +40,58 @@ var Calculator = {
 		return finalWeaponValues;
 	},
 
+	calculateDamage: function(rawDamage, sharpnessObject) {
+		var sharpnessMultipliers = {
+										red: .5,
+										orange: .75,
+										yellow: 1,
+										green: 1.05,
+										blue: 1.2,
+										white: 1.32};
+		var sharpnessTotal = 0;
+		var totalDamage = 0;
+		var finalDamageArray = [];
+		var maxSharpnessValue = 5;
+		var localMinSharpnessValue = Calculator.minSharpnessValue;
+		for (var sharpLevel in sharpnessMultipliers) {
+			var sharpVal = sharpnessObject[sharpLevel];
+			var sharpMulti = sharpnessMultipliers[sharpLevel];
+			var sharpAdjDamage = rawDamage * sharpVal * sharpMulti;
+			if (sharpAdjDamage == 0) {
+				maxSharpnessValue--;
+			}
+			finalDamageArray.push([sharpAdjDamage, sharpVal]);
+		}
+
+		if (maxSharpnessValue < localMinSharpnessValue) {
+			localMinSharpnessValue = maxSharpnessValue;
+		}
+
+		for (var sharpLevel = localMinSharpnessValue; sharpLevel <= maxSharpnessValue; sharpLevel++) {
+			totalDamage += finalDamageArray[sharpLevel][0];
+			sharpnessTotal += finalDamageArray[sharpLevel][1];
+		}
+		var finalDamage = totalDamage/sharpnessTotal;
+		return finalDamage;
+	},
+
 	//Map an array of kiranico weapon objects into an array of calculator weapon objects
 	mapWeapons: function(weaponArray) {
 		var returnArray = [];
+		var maxLevel = 0;
 		_.each(weaponArray, function(weapon) {
 			var weaponName = weapon.name;
+			maxLevel = weapon.levels.length;
 			_.each(weapon.levels, function(level) {
-				var returnObject = {};
-				returnObject.weaponName = weaponName + " - level " + level.level;
-				returnObject.attack = level.attack;
-				returnObject.affinity = level.affinity;
-				returnObject.element = Calculator.getElementData(level.elements);
-				returnArray.push(returnObject);
+				if ((Calculator.maxLevelOnly && (level.level == maxLevel)) || !Calculator.maxLevelOnly) {
+					var returnObject = {};
+					returnObject.weaponName = weaponName + " - level " + level.level;
+					returnObject.attack = level.attack;
+					returnObject.affinity = level.affinity;
+					returnObject.element = Calculator.getElementData(level.elements);
+					returnObject.sharpness = Calculator.getSharpnessData(level.sharpness, Calculator.sharpnessValue);
+					returnArray.push(returnObject);
+				}
 			});
 		});
 		return returnArray;
@@ -81,6 +125,14 @@ var Calculator = {
 		var elements = ["Fire", "Water", "Thunder", "Dragon", "Ice", "Poison", "Para", "Sleep", "Blast"];
 		var elementName = elements[elementID];
 		return elementName
+	},
+
+	getSharpnessData: function(sharpnessArray, sharpnessLevel) {
+		var sharpnessData = sharpnessArray[sharpnessLevel];
+		delete sharpnessData.pivot;
+		delete sharpnessData.id;
+		console.log(sharpnessData);
+		return sharpnessData;
 	}
 };
 
@@ -95,12 +147,17 @@ modifierGroupCollection.fetch({
 	success: function() {
 		_.each(modifierGroupCollection.toJSON(), function(modGroup) {
 			var modifierGroup = new Calculator.Models.ModifierGroup(modGroup);
+			$('[data-toggle="tooltip"]').tooltip();
 		});
 
 	}
 })
 
 var buttonView = new Calculator.Views.ButtonView();
+
+var sharpnessView = new Calculator.Views.SharpnessView();
+
+var minSharpnessView = new Calculator.Views.MinSharpnessView();
 
 
 
@@ -279,17 +336,8 @@ function initViews() {
 		}
 	});
 
-	Calculator.Views.WeaponInfoView = Backbone.View.extend({
-		el: "#weapon-info",
-		template: _.template($("#weapon-info-template").html()),
-
-		render: function() {
-			this.$el.html(this.template(this.model.toJSON()));
-		}
-	});
-
 	Calculator.Views.ModifiersView = Backbone.View.extend({
-		//className: "col-md-3",
+		className: "col-md-3",
 		initialize: function() {
 			_.bindAll(this, "renderItem");
 		},
@@ -335,19 +383,45 @@ function initViews() {
 	});
 
 	Calculator.Views.SharpnessView = Backbone.View.extend({
+		el: "#sharpness-picker",
 
+		events: {
+			"change input[type=radio]": "setSharpness"
+		},
+
+		setSharpness: function(event) {
+			Calculator.sharpnessValue = event.target.value;
+		}
+	});
+
+	Calculator.Views.MinSharpnessView = Backbone.View.extend({
+		el: "#minimum-sharpness",
+
+		events: {
+			"change input[type=radio]": "setMinSharpness"
+		},
+
+		setMinSharpness: function(event) {
+			console.log("setting min sharpness to ", event.target.value);
+			Calculator.minSharpnessValue = event.target.value;
+		}
 	});
 
 	Calculator.Views.ButtonView = Backbone.View.extend({
 		el: "#buttons",
 
 		events: {
-			"click #compareClass": "compareClass"
+			"click #compareClass": "compareClass",
+			"click input[type=checkbox]": "setMaxLevelOnly"
 		},
 
 		compareClass: function() {
 			var weaponClassValues = Calculator.calculate(Calculator.selectedWeapons, Calculator.modifierValues);
 			var weaponClassView = new Calculator.Views.WeaponTableView({ collection: weaponClassValues});
+		},
+
+		setMaxLevelOnly: function(event) {
+			Calculator.maxLevelOnly = event.target.checked;
 		}
 
 	});
@@ -355,9 +429,10 @@ function initViews() {
 	Calculator.Views.WeaponTableView = Backbone.View.extend({
 		el: "#displayTable",
 		template: _.template($("#table-template").html()),
+		sharpnessDiv: "",
 
 		initialize: function() {
-			
+			_.each(this.collection, this.convertSharpness);
 			this.render();
 		},
 
@@ -367,6 +442,16 @@ function initViews() {
 				valueNames: [ "name", "attack", "affinity", "calcAttack"]
 			};
 			var weaponList = new List("displayTable", options);
+		},
+
+		convertSharpness: function(weapon) {
+			var $returnDiv = $("<div>", {class: "sharpness-bar", style: "height: 10px"});
+
+			_.mapObject(weapon.sharpness, function(val, key) {
+				$returnDiv.append($("<span>", {class: key, style: "width: " + val/5 + "px"}));
+			});
+			weapon.sharpnessBar = $returnDiv.prop("outerHTML");
+			return $returnDiv;
 		}
 	});
 }

@@ -8,27 +8,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" Href="/css/style.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </head>
 <body>
-	<div id = "weaponDiv" class="container-fluid">
+	<h1>MHGen Damage Calculator</h1>
+	<div id = "weaponDiv" class="well container-fluid">
 		<div>
 			<div id = "type-dd" class="col-md-4"></div>
-			<div id = "weapon-dd" class="col-md-4"></div>
-		    <div id = "level-dd" class="col-md-4"></div>
+			<div data-toggle="tooltip" title="These don't do anything yet" id = "weapon-dd" class="col-md-4"></div>
+		    <div data-toggle="tooltip" title="These don't do anything yet" id = "level-dd" class="col-md-4"></div>
 	    </div>
     </div>
     <div id = "weapon-info"></div>
-    <div id = "modifiers" class="container-fluid"></div>
-    <div id = "sharpness-picker">
-        <input type="radio" name="sharpnessRB" value="0">Sharpness +0
-        <input type="radio" name="sharpnessRB" value="1">Sharpness +1
-        <input type="radio" name="sharpnessRB" value="2">Sharpness +2
+    <div id = "modifiers" class="well container-fluid"></div>
+    <div id = "sharpnessDiv" class = "well container-fluid">
+	    <div id = "sharpness-picker">
+	    	<h3>Sharpness +</h3>
+	        <input type="radio" name="sharpnessRB" value="0">Sharpness +0
+	        <input type="radio" name="sharpnessRB" value="1">Sharpness +1
+	        <input type="radio" name="sharpnessRB" value="2">Sharpness +2
+	    </div>
+	    <div title="Minimum sharpness you will allow a weapon to reach" id = "minimum-sharpness">
+	    	<h3>Minimum Sharpness</h3>
+	    	<input type="radio" name="minimumsharpnessRB" value="0">Red
+	    	<input type="radio" name="minimumsharpnessRB" value="1">Orange
+	    	<input type="radio" name="minimumsharpnessRB" value="2">Yellow
+	    	<input type="radio" name="minimumsharpnessRB" value="3">Green
+	    	<input type="radio" name="minimumsharpnessRB" value="4">Blue
+	    	<input type="radio" name="minimumsharpnessRB" value="5">White
+	    </div>
     </div>
     <div id = "buttons">
-        <button id = "compareClass">Compare Weapon Class</button>
+        <button id = "compareClass">Compare!</button>
+        <input type="checkbox" value="maxLevelOnly"><span>Max Level Weapons Only</span>
     </div>
-    <div id = "displayTable"></div>
+    <div id = "displayTable" class = "panel table-responsive"></div>
+    <div id = "aboutSection">
+    	<span>Calculator by Trogg.</span>	<a href="https://github.com/TrentWest7190/mhcalc-backbone">GitHub</a>
+    </div>
     <script type="text/template" id="weapon-type-template">
     	<select id="weapon-type-select">
     		<option value = "0"></option>
@@ -54,18 +70,22 @@
         </select>
     </script>
     <script type="text/template" id="modifier-template">
-        <input type="checkbox" class="group<%= groupName %>CB" name="Group <%= groupName %>" value="<%= modifier %>"><%= name %> 
+        <input type="checkbox" class="group<%= groupName %>CB" name="Group <%= groupName %>" value="<%= modifier %>"><span data-toggle="tooltip" title="Attack +<%= modifier[0] %>, Affinity +<%= modifier[1] %>"><%= name %></span>
+
     </script>
     <script type="text/template" id="table-template">
-        <input class="search" placeholder="Search" />
-        <button class="sort" data-sort="calcAttack">Sort by Attack</button>
-        <table class="table-condensed">
+    	<div id = "sortAndSearch">
+	        <input class="search" placeholder="Search" />
+	        <button class="sort" data-sort="calcAttack">Sort by Attack</button>
+        </div>
+        <table class="table table-condensed">
             <tr>
                 <th>Name</th>
                 <th>Attack</th>
                 <th>Affinity</th>
                 <th>Calculated Attack</th>
                 <th>Element</th>
+                <th>Sharpness</th>
             </tr>
             <tbody class="list">
             <% _.each(weaponInfo, function(weapon) { %>
@@ -79,20 +99,18 @@
                 <%= subElement.value %> <%= subElement.elementName %><br>
                 <% }); %>
                 </td>
+                <td><%= weapon.sharpnessBar %></td>
             </tr>
             <% }); %>
             </tbody>
         </table>
-    </script>
-    <script type="text/template" id="weapon-info-template">
-    	Attack: <%= attack %>
-    	Affinity: <%= affinity %>%
     </script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.0/backbone-min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.5.6/backbone.marionette.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.2.0/list.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script type="text/javascript" src="js/main.js"></script>
 </body>
 
