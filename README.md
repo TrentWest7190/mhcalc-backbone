@@ -6,6 +6,7 @@ Monster Hunter Generations weapon damage calculator in backbone framework
 
 ## To-do
 
+- Use switch axe phials in calculations
 - Compare between weapon types
 - Compare specific weapons
 - Compare weapons against a specific monster
