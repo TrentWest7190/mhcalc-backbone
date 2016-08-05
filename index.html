@@ -70,7 +70,7 @@
         </select>
     </script>
     <script type="text/template" id="modifier-template">
-        <input type="checkbox" class="group<%= groupName %>CB" name="Group <%= groupName %>" value="<%= modifier %>"><span data-toggle="tooltip" title="Attack +<%= modifier[0] %>, Affinity +<%= modifier[1] %>"><%= name %></span>
+        <input type="checkbox" class="group<%= groupName %>CB" name="Group <%= groupName %>" value="<%= modifier %>"><span data-toggle="tooltip" title="Attack +<%= modifier[0] %>, Affinity +<%= modifier[1] %>, <% if (modifier[2]) { %>Attack x<%= modifier[2] %><% } %>"><%= name %></span>
 
     </script>
     <script type="text/template" id="table-template">
@@ -111,6 +111,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.5.6/backbone.marionette.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.2.0/list.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/bignumber.js/1.3.0/bignumber.min.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
 </body>
 

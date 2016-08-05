@@ -30,7 +30,13 @@ var Calculator = {
 				}
 			});
 
-			var attackNoSharpness = weapon.attack + (weapon.attack * .25 * (weapon.affinity/100));
+			var bigNumberAttack = new BigNumber(weapon.attack);
+			var bigNumberAffinity = new BigNumber(weapon.affinity);
+			var bigNumberAdjAttack = bigNumberAttack.times(.25).times(bigNumberAffinity).div(100);
+
+			var attackNoSharpness = bigNumberAttack.plus(bigNumberAdjAttack);
+
+			//var attackNoSharpness = weapon.attack + (weapon.attack * .25 * (weapon.affinity/100));
 
 			weapon.calcAttack = Calculator.calculateDamage(attackNoSharpness, weapon.sharpness)
 
@@ -48,16 +54,17 @@ var Calculator = {
 										green: 1.05,
 										blue: 1.2,
 										white: 1.32};
-		var sharpnessTotal = 0;
-		var totalDamage = 0;
+		var sharpnessTotal = new BigNumber(0);
+		var totalDamage = new BigNumber(0);
 		var finalDamageArray = [];
 		var maxSharpnessValue = 5;
 		var localMinSharpnessValue = Calculator.minSharpnessValue;
 		for (var sharpLevel in sharpnessMultipliers) {
 			var sharpVal = sharpnessObject[sharpLevel];
 			var sharpMulti = sharpnessMultipliers[sharpLevel];
-			var sharpAdjDamage = rawDamage * sharpVal * sharpMulti;
-			if (sharpAdjDamage == 0) {
+			//var sharpAdjDamage = rawDamage * sharpVal * sharpMulti;
+			var sharpAdjDamage = rawDamage.times(sharpVal).times(sharpMulti);
+			if (sharpAdjDamage.equals(0)) {
 				maxSharpnessValue--;
 			}
 			finalDamageArray.push([sharpAdjDamage, sharpVal]);
@@ -68,10 +75,10 @@ var Calculator = {
 		}
 
 		for (var sharpLevel = localMinSharpnessValue; sharpLevel <= maxSharpnessValue; sharpLevel++) {
-			totalDamage += finalDamageArray[sharpLevel][0];
-			sharpnessTotal += finalDamageArray[sharpLevel][1];
+			totalDamage = totalDamage.plus(finalDamageArray[sharpLevel][0]);
+			sharpnessTotal = sharpnessTotal.plus(finalDamageArray[sharpLevel][1]);
 		}
-		var finalDamage = totalDamage/sharpnessTotal;
+		var finalDamage = totalDamage.div(sharpnessTotal);
 		return finalDamage;
 	},
 
