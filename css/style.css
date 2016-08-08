@@ -13,9 +13,20 @@ h1 {
 	text-align: center;
 }
 
+.center {
+     float: none;
+     margin-left: auto;
+     margin-right: auto;
+}
+
+.panel-default {
+	background-color: #F5F5F5;
+}
+
 #modifiers {
 	width: 110vh;
 	height: 40vh;
+	overflow-y: scroll;
 }
 
 #sharpnessDiv {
@@ -27,8 +38,8 @@ h1 {
 	width: 50%;
 }
 
-#weaponDiv {
-	width: 60vh;
+#weaponDDPanel {
+	width: 30vh;
 }
 
 #buttons {

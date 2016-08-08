@@ -12,13 +12,13 @@
 </head>
 <body>
 	<h1>MHGen Damage Calculator</h1>
-	<div id = "weaponDiv" class="well container-fluid">
-		<div>
-			<div id = "type-dd" class="col-md-4"></div>
-			<div data-toggle="tooltip" title="These don't do anything yet" id = "weapon-dd" class="col-md-4"></div>
-		    <div data-toggle="tooltip" title="These don't do anything yet" id = "level-dd" class="col-md-4"></div>
-	    </div>
-    </div>
+	<div id = "weaponDDPanel" class="panel panel-default center">
+		<div id = "weaponDiv" class="row">
+			<div id = "type-dd" class="col-md-12 center-block"></div>
+			<div data-toggle="tooltip" title="These don't do anything yet" id = "weapon-dd" class="col-md-12"></div>
+		    <div data-toggle="tooltip" title="These don't do anything yet" id = "level-dd" class="col-md-12"></div>
+	    </div>		
+    </div>	
     <div id = "weapon-info"></div>
     <div id = "modifiers" class="well container-fluid"></div>
     <div id = "sharpnessDiv" class = "well container-fluid">
@@ -47,7 +47,7 @@
     	<span>Calculator by Trogg.</span>	<a href="https://github.com/TrentWest7190/mhcalc-backbone">GitHub</a>
     </div>
     <script type="text/template" id="weapon-type-template">
-    	<select id="weapon-type-select">
+    	<select id="weapon-type-select" class="center-block">
     		<option value = "0"></option>
     		<% _.each(weaponTypes, function(type) { %>
     		<option value= "<%= type.id %>"><%= type.name %></option>
@@ -55,7 +55,7 @@
     	</select>
     </script>
     <script type="text/template" id="weapon-template">
-    	<select id="weapon-select">
+    	<select id="weapon-select" class='center-block'>
     		<option value = "0"></option>
     		<% _.each(weapons, function(weapon) { %>
     		<option value= "<%= weapon.id %>"><%= weapon.strings[0].name %></option>
@@ -63,7 +63,7 @@
     	</select>
     </script>
     <script type="text/template" id="weapon-level-template">
-        <select id="weapon-level-select">
+        <select id="weapon-level-select" class='center-block'>
             <option value="0"></option>
             <% _.each(levels, function(level) { %>
             <option value= "<%= level.id %>">Level <%= level.level %></option>
