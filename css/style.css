@@ -26,16 +26,11 @@ h1 {
 #modifiers {
 	width: 110vh;
 	height: 40vh;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 #sharpnessDiv {
 	width: 110vh;
-}
-
-#sharpnessDiv div {
-	float: left;
-	width: 50%;
 }
 
 #weaponDDPanel {
@@ -74,6 +69,7 @@ td {
 
 .sharpness-bar {
 	min-width: 82px;
+	max-width: 82px;
 	border: 1px solid;
     border-color: black;
     background-color: #bbb;
@@ -107,4 +103,12 @@ td {
     display: inline-block;
     height: 100%;
     float: left;
+}
+
+#sharpnessDiv .col-md-6 {
+	padding-bottom: 1vh;
+}
+
+select {
+	width: 16vh;
 }

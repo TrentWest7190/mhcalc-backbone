@@ -7,11 +7,14 @@ var Calculator = {
 	sharpnessValue: 0,
 	minSharpnessValue: 5,
 	maxLevelOnly: false,
+	critBoost: false,
+	weaponClass: "",
 
 	init : function() {
 		initModels();
 		initCollections();
 		initViews();
+		startCalculator();
 	},
 
 	//calculates the end attack and affinity values of an array of kiranico weapon objects using the modifier object passed in
@@ -30,9 +33,13 @@ var Calculator = {
 				}
 			});
 
+			var critMultiplier = Calculator.critBoost ? .4 : .25;
 			var bigNumberAttack = new BigNumber(weapon.attack);
+			if (weapon.phial.type) {
+				bigNumberAttack = weapon.phial.type == "Power" ? bigNumberAttack.times(1.2) : bigNumberAttack;
+			}
 			var bigNumberAffinity = new BigNumber(weapon.affinity);
-			var bigNumberAdjAttack = bigNumberAttack.times(.25).times(bigNumberAffinity).div(100);
+			var bigNumberAdjAttack = bigNumberAttack.times(critMultiplier).times(bigNumberAffinity).div(100);
 
 			var attackNoSharpness = bigNumberAttack.plus(bigNumberAdjAttack);
 
@@ -97,6 +104,12 @@ var Calculator = {
 					returnObject.affinity = level.affinity;
 					returnObject.element = Calculator.getElementData(level.elements);
 					returnObject.sharpness = Calculator.getSharpnessData(level.sharpness, Calculator.sharpnessValue);
+
+					//SwitchAxe phial stuff
+					if (level.phials) {
+						var phialObject = level.phials[0]; //Nothing has 2 phials afaik
+						returnObject.phial = Calculator.getPhialData(phialObject);
+					}
 					returnArray.push(returnObject);
 				}
 			});
@@ -140,33 +153,47 @@ var Calculator = {
 		delete sharpnessData.id;
 		console.log(sharpnessData);
 		return sharpnessData;
+	},
+
+	getPhialData: function(phialObject) {
+		var phialData = {};
+		var phials = ["Power", "Element", "Para", "Dragon", "Exhaust", "Poison", "Impact"]
+		var phialType = phials[phialObject.id-1];
+		var phialValue = phialObject.pivot.value;
+		phialData.type = phialType;
+		phialData.value = phialValue;
+		return phialData;
 	}
 };
 
 Calculator.init();
 
-var weaponTypeCollection = new Calculator.Collections.WeaponTypeCollection();
 
-var view = new Calculator.Views.WeaponTypeView({ collection: weaponTypeCollection});
+function startCalculator() {
+	var weaponTypeCollection = new Calculator.Collections.WeaponTypeCollection();
 
-var modifierGroupCollection = new Calculator.Collections.ModifierGroupCollection();
-modifierGroupCollection.fetch({
-	success: function() {
-		_.each(modifierGroupCollection.toJSON(), function(modGroup) {
-			var modifierGroup = new Calculator.Models.ModifierGroup(modGroup);
-			$('[data-toggle="tooltip"]').tooltip();
-		});
+	var view = new Calculator.Views.WeaponTypeView({ collection: weaponTypeCollection});
 
-	}
-})
+	var modifierGroupCollection = new Calculator.Collections.ModifierGroupCollection();
+	modifierGroupCollection.fetch({
+		success: function() {
+			_.each(modifierGroupCollection.toJSON(), function(modGroup) {
+				var modifierGroup = new Calculator.Models.ModifierGroup(modGroup);
+				$('[data-toggle="tooltip"]').tooltip();
+			});
 
-var buttonView = new Calculator.Views.ButtonView();
+		}
+	})
 
-var sharpnessView = new Calculator.Views.SharpnessView();
+	var buttonView = new Calculator.Views.ButtonView();
 
-var minSharpnessView = new Calculator.Views.MinSharpnessView();
+	var sharpnessView = new Calculator.Views.SharpnessView();
 
+	var minSharpnessView = new Calculator.Views.MinSharpnessView();
 
+	var critBoostView = new Calculator.Views.CritBoostView();
+
+}
 
 function initModels() {
 	Calculator.Models.WeaponType = Backbone.Model.extend();
@@ -266,6 +293,7 @@ function initViews() {
 					break;
 
 			}
+			Calculator.weaponClass = weaponName;
 			var weaponCollection = new Calculator.Collections.WeaponCollection();
 			weaponCollection.url = "data/weapons/"+weaponName+".json";
 			weaponView = new Calculator.Views.WeaponView({ collection: weaponCollection});
@@ -414,6 +442,20 @@ function initViews() {
 		}
 	});
 
+	Calculator.Views.CritBoostView = Backbone.View.extend({
+		el: "#crit-boost",
+
+		events: {
+			"change input[type=radio]": "setCritBoost"
+		},
+
+		setCritBoost: function(event) {
+			var critBoostActive = event.target.value == "true" ? true : false;
+			console.log("critBoost:", critBoostActive);
+			Calculator.critBoost = critBoostActive;
+		}
+	})
+
 	Calculator.Views.ButtonView = Backbone.View.extend({
 		el: "#buttons",
 
@@ -440,11 +482,12 @@ function initViews() {
 
 		initialize: function() {
 			_.each(this.collection, this.convertSharpness);
+			console.log(this.collection);
 			this.render();
 		},
 
 		render: function() {
-			this.$el.html(this.template({ weaponInfo: this.collection }));
+			this.$el.html(this.template({ weaponInfo: this.collection, weaponClass: Calculator.weaponClass }));
 			var options = {
 				valueNames: [ "name", "attack", "affinity", "calcAttack"]
 			};

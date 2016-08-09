@@ -20,22 +20,31 @@
 	    </div>		
     </div>	
     <div id = "weapon-info"></div>
-    <div id = "modifiers" class="well container-fluid"></div>
-    <div id = "sharpnessDiv" class = "well container-fluid">
-	    <div id = "sharpness-picker">
-	    	<h3>Sharpness +</h3>
-	        <input type="radio" name="sharpnessRB" value="0">Sharpness +0
-	        <input type="radio" name="sharpnessRB" value="1">Sharpness +1
-	        <input type="radio" name="sharpnessRB" value="2">Sharpness +2
+    <div id = "modifiers" class="panel panel-default center container-fluid"></div>
+    <div id = "sharpnessDiv" class = "panel panel-default container-fluid">
+    	<div class = "row">
+		    <div id = "sharpness-picker" class = "col-md-6">
+		    	<h3>Sharpness +</h3>
+		        <input type="radio" name="sharpnessRB" value="0">Sharpness +0
+		        <input type="radio" name="sharpnessRB" value="1">Sharpness +1
+		        <input type="radio" name="sharpnessRB" value="2">Sharpness +2
+		    </div>
+		    <div data-toggle = "tooltip" title="Minimum sharpness you will allow a weapon to reach before sharpening" id = "minimum-sharpness" class = "col-md-6">
+		    	<h3>Minimum Sharpness</h3>
+		    	<input type="radio" name="minimumsharpnessRB" value="0">Red
+		    	<input type="radio" name="minimumsharpnessRB" value="1">Orange
+		    	<input type="radio" name="minimumsharpnessRB" value="2">Yellow
+		    	<input type="radio" name="minimumsharpnessRB" value="3">Green
+		    	<input type="radio" name="minimumsharpnessRB" value="4">Blue
+		    	<input type="radio" name="minimumsharpnessRB" value="5">White
+		    </div>
 	    </div>
-	    <div title="Minimum sharpness you will allow a weapon to reach" id = "minimum-sharpness">
-	    	<h3>Minimum Sharpness</h3>
-	    	<input type="radio" name="minimumsharpnessRB" value="0">Red
-	    	<input type="radio" name="minimumsharpnessRB" value="1">Orange
-	    	<input type="radio" name="minimumsharpnessRB" value="2">Yellow
-	    	<input type="radio" name="minimumsharpnessRB" value="3">Green
-	    	<input type="radio" name="minimumsharpnessRB" value="4">Blue
-	    	<input type="radio" name="minimumsharpnessRB" value="5">White
+	    <div class = "row">
+	    	<div id = "crit-boost" class = "col-md-6" data-toggle = "tooltip" title = "Crit damage increased from 1.25 to 1.4">
+	    		<h3>Crit Boost</h3>
+	    		<input type="radio" name="critBoostRB" value="true">On
+	    		<input type="radio" name="critBoostRB" value="false">Off
+	    	</div>
 	    </div>
     </div>
     <div id = "buttons">
@@ -71,7 +80,7 @@
         </select>
     </script>
     <script type="text/template" id="modifier-template">
-        <input type="checkbox" class="group<%= groupName %>CB" name="Group <%= groupName %>" value="<%= modifier %>"><span data-toggle="tooltip" title="Attack +<%= modifier[0] %>, Affinity +<%= modifier[1] %>, <% if (modifier[2]) { %>Attack x<%= modifier[2] %><% } %>"><%= name %></span>
+        <input type="checkbox" class="group<%= groupName %>CB" name="Group <%= groupName %>" value="<%= modifier %>"><span data-toggle="tooltip" title="Attack +<%= modifier[0] %>, Affinity +<%= modifier[1] %><% if (modifier[2]) { %>, Attack x<%= modifier[2] %><% } %>"><%= name %></span>
 
     </script>
     <script type="text/template" id="table-template">
@@ -101,6 +110,9 @@
                 <% }); %>
                 </td>
                 <td><%= weapon.sharpnessBar %></td>
+                <% if(weapon.phial) { %>
+                <td><% if (weapon.phial.value > 0) { %><%= weapon.phial.value %><% } %> <%= weapon.phial.type %></td>
+                <% } %>
             </tr>
             <% }); %>
             </tbody>
