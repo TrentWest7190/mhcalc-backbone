@@ -27,6 +27,7 @@ h1 {
 	width: 110vh;
 	height: 40vh;
 	overflow-y: auto;
+	padding-top: 20px;
 }
 
 #sharpnessDiv {

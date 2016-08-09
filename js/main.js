@@ -442,6 +442,13 @@ function initViews() {
 		setMinSharpness: function(event) {
 			console.log("setting min sharpness to ", event.target.value);
 			Calculator.minSharpnessValue = event.target.value;
+
+			if (event.target.value == "2" || event.target.value == "1" || event.target.value == "0") {
+				$("#sharpness-warning").empty();
+				$("#sharpness-warning").append("<h4 style='color: red'>There's a penalty for hitting too early/too late when in yellow or lower sharpness. Thus, using sharpness this low is not recommended.</h4>");
+			} else {
+				$("#sharpness-warning").empty();
+			}
 		}
 	});
 
