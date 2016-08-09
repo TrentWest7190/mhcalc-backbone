@@ -11,7 +11,7 @@ Monster Hunter Generations weapon damage calculator in backbone framework
 - Couple of CSS changes. Site should be very very slightly better looking on mobile.
 
 ## To-do
-
+- Make the table update automatically when you change modifiers
 - Compare between weapon types
 - Compare specific weapons
 - Compare weapons against a specific monster
