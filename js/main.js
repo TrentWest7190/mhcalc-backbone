@@ -38,6 +38,9 @@ var Calculator = {
 			if (weapon.phial) {
 				bigNumberAttack = weapon.phial.type == "Power" ? bigNumberAttack.times(1.2) : bigNumberAttack;
 			}
+			if (weapon.affinity > 100) {
+				weapon.affinity == 100;
+			}
 			var bigNumberAffinity = new BigNumber(weapon.affinity);
 			var bigNumberAdjAttack = bigNumberAttack.times(critMultiplier).times(bigNumberAffinity).div(100);
 
