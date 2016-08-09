@@ -19,6 +19,7 @@ var Calculator = {
 
 	//calculates the end attack and affinity values of an array of kiranico weapon objects using the modifier object passed in
 	calculate: function(kiranicoWeaponArray, modifiersObject) {
+		console.log("in calculate");
 		var mappedWeapons = this.mapWeapons(kiranicoWeaponArray);
 		var modifierArray = this.createModArray(modifiersObject);
 
@@ -107,6 +108,7 @@ var Calculator = {
 					returnObject.affinity = level.affinity;
 					returnObject.element = Calculator.getElementData(level.elements);
 					returnObject.sharpness = Calculator.getSharpnessData(level.sharpness, Calculator.sharpnessValue);
+					returnObject.weaponID = level.id;
 
 					//SwitchAxe phial stuff
 					if (level.phials.length > 0) {
@@ -173,6 +175,7 @@ Calculator.init();
 
 
 function startCalculator() {
+	console.log("in startCalculator");
 	var weaponTypeCollection = new Calculator.Collections.WeaponTypeCollection();
 
 	var view = new Calculator.Views.WeaponTypeView({ collection: weaponTypeCollection});
@@ -214,6 +217,21 @@ function initModels() {
 	});
 	Calculator.Models.Modifier = Backbone.Model.extend();
 	Calculator.Models.WeaponInfo = Backbone.Model.extend();
+	Calculator.Models.CalculatedWeapon = Backbone.Model.extend({
+		initialize: function() {
+			this.convertSharpness()
+		},
+
+		convertSharpness: function() {
+			var $returnDiv = $("<div>", {class: "sharpness-bar", style: "height: 10px"});
+
+			_.mapObject(this.get("sharpness"), function(val, key) {
+				$returnDiv.append($("<span>", {class: key, style: "width: " + val/5 + "px"}));
+			});
+			this.set("sharpnessBar", $returnDiv.prop("outerHTML"));
+			return $returnDiv;
+		}
+	});
 }
 
 function initCollections() {
@@ -246,6 +264,10 @@ function initCollections() {
 			return this.group;
 		}
 	});
+
+	Calculator.Collections.CalculatedWeaponCollection = Backbone.Collection.extend({
+		model: Calculator.Models.CalculatedWeapon
+	})
 }
 
 function initViews() {
@@ -470,13 +492,18 @@ function initViews() {
 		el: "#buttons",
 
 		events: {
-			"click #compareClass": "compareClass",
+			"click #compareClass": "compareWeapons",
 			"click input[type=checkbox]": "setMaxLevelOnly"
 		},
 
-		compareClass: function() {
-			var weaponClassValues = Calculator.calculate(Calculator.selectedWeapons, Calculator.modifierValues);
-			var weaponClassView = new Calculator.Views.WeaponTableView({ collection: weaponClassValues});
+		compareWeapons: function() {
+			$("#calc-weapon-table").empty();
+			var calculatedWeaponArray = Calculator.calculate(Calculator.selectedWeapons, Calculator.modifierValues);
+			var calcedWeaponCollection = new Calculator.Collections.CalculatedWeaponCollection();
+			_.each(calculatedWeaponArray, function(calcedWeapon) {
+				var calcedWeaponModel = new Calculator.Models.CalculatedWeapon(calcedWeapon);
+				calcedWeaponCollection.add(calcedWeaponModel);
+			});
 		},
 
 		setMaxLevelOnly: function(event) {
@@ -485,8 +512,35 @@ function initViews() {
 
 	});
 
+	Calculator.Views.CalculatedWeaponView = Backbone.View.extend({
+		tagName : 'tr',
+		template: _.template($("#calc-weapon-row-template").html()),
+
+		initialize: function() {
+			this.convertSharpness();
+		},
+
+		convertSharpness: function() {
+			var $returnDiv = $("<div>", {class: "sharpness-bar", style: "height: 10px"});
+
+			_.mapObject(this.model.get("sharpness"), function(val, key) {
+				$returnDiv.append($("<span>", {class: key, style: "width: " + val/5 + "px"}));
+			});
+			this.model.set("sharpnessBar", $returnDiv.prop("outerHTML"));
+			return $returnDiv;
+		},
+
+		render: function() {
+			this.$el.html(this.template({ weapon: this.model.toJSON(), weaponClass: Calculator.weaponClass }));
+		}
+	});
+
+
+
+	//depreciated, now all weapon rows are an individual view to keep better track of them
+	/*
 	Calculator.Views.WeaponTableView = Backbone.View.extend({
-		el: "#displayTable",
+		el: "#calc-weapon-table",
 		template: _.template($("#table-template").html()),
 		sharpnessDiv: "",
 
@@ -514,4 +568,5 @@ function initViews() {
 			return $returnDiv;
 		}
 	});
+	*/
 }

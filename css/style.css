@@ -52,12 +52,18 @@ h1 {
 	margin: 0;
 	border: 0;
 	background-color: #EBEBEB;
+	float:  left;
+	width: 50%;
 }
 
 .table-condensed {
-	width:50%; 
+	/*width:50%; 
     margin-left:25%; 
-    margin-right:25%;
+    margin-right:25%;*/
+}
+
+.table {
+	margin: 0px;
 }
 
 th {
