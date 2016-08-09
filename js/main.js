@@ -35,7 +35,7 @@ var Calculator = {
 
 			var critMultiplier = Calculator.critBoost ? .4 : .25;
 			var bigNumberAttack = new BigNumber(weapon.attack);
-			if (weapon.phial.type) {
+			if (weapon.phial) {
 				bigNumberAttack = weapon.phial.type == "Power" ? bigNumberAttack.times(1.2) : bigNumberAttack;
 			}
 			var bigNumberAffinity = new BigNumber(weapon.affinity);
@@ -106,7 +106,7 @@ var Calculator = {
 					returnObject.sharpness = Calculator.getSharpnessData(level.sharpness, Calculator.sharpnessValue);
 
 					//SwitchAxe phial stuff
-					if (level.phials) {
+					if (level.phials.length > 0) {
 						var phialObject = level.phials[0]; //Nothing has 2 phials afaik
 						returnObject.phial = Calculator.getPhialData(phialObject);
 					}
