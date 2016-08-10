@@ -114,7 +114,7 @@
 	"group": "M",
 	"modifiers": [{
 		"id":20,
-		"name":"Resucitate",
+		"name":"Crisis",
 		"modifier":[20,0]
 	}]
 },
@@ -148,5 +148,13 @@
 		"id":25,
 		"name":"Repeat Offender",
 		"modifier":[0,30]
+	}]
+},
+{
+	"group": "R",
+	"modifiers": [{
+		"id":26,
+		"name":"Furor",
+		"modifier":[20,0]
 	}]
 }]

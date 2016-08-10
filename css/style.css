@@ -39,6 +39,7 @@ h1 {
 }
 
 #buttons {
+	text-align:  center;
 	margin: auto;
 	width: 25%;
 }
@@ -54,7 +55,7 @@ h1 {
 	border: 0;
 	float:  left;
 	width: 50%;
-	margin-bottom: 20px;
+	margin-bottom: 40px;
 }
 
 .table {
@@ -119,4 +120,10 @@ td {
 
 select {
 	width: 16vh;
+}
+
+.center-check {
+	display:  inline-block;
+	width: 50%;
+	margin:  0 auto;
 }

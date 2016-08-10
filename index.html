@@ -12,11 +12,12 @@
 </head>
 <body>
 	<h1>MHGen Damage Calculator</h1>
+    
 	<div id = "weaponDDPanel" class="panel panel-default center">
 		<div id = "weaponDiv" class="row">
 			<div id = "type-dd" class="col-md-12 center-block"></div>
-			<div data-toggle="tooltip" title="These don't do anything yet" id = "weapon-dd" class="col-md-12"></div>
-		    <div data-toggle="tooltip" title="These don't do anything yet" id = "level-dd" class="col-md-12"></div>
+			<div data-toggle="tooltip" title="" id = "weapon-dd" class="col-md-12"></div>
+		    <div data-toggle="tooltip" title="" id = "level-dd" class="col-md-12"></div>
 	    </div>		
     </div>	
     <div id = "weapon-info"></div>
@@ -49,11 +50,14 @@
 	    </div>
     </div>
     <div id = "buttons">
-        <button id = "compareClass">Compare!</button>
-        <input type="checkbox" value="maxLevelOnly"><span>Max Level Weapons Only</span>
+        <button id = "compareClass" class="center-block">Compare!</button>
+        <div class = "center-check">
+            <input type="checkbox" value="maxLevelOnly"><span>Max Level Weapons Only</span>
+        </div>
+        <input type="text" id="search-box" class = "center-block" placeholder="Search...">
     </div>
     <div id = "displayTable" class = "panel table-responsive">
-    <h3 class="text-center">Current Table</h3>
+        <h3 class="text-center">Current Table</h3>
         <table id= "calcedTable" class="table table-condensed tablesorter">
             <thead>
                 <tr>
@@ -84,12 +88,87 @@
                     <th>Phial</th>
                 </tr>
             </thead>
-            <tbody id="saved-weapon-table" class="list">
+            <tbody id="saved-weapon-table" class="weapon-table">
             </tbody>
         </table>
     </div>
     <div id = "aboutSection">
     	<span>Calculator by Trogg.</span>	<a href="https://github.com/TrentWest7190/mhcalc-backbone">GitHub</a>
+        <button id="about-button" type="button" class="btn btn-info" data-toggle="modal" data-target="#about-modal">About</button>
+    </div>
+    <div id="about-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Modal Header</h4>
+          </div>
+          <div class="modal-body">
+            <h1>Monster Hunter Generations Calculator</h1>
+
+            <p>Monster Hunter Generations weapon damage calculator in the backbone framework.</p>
+
+            <h1>How To Use</h1>
+
+            <p>Select a weapon class, select modifiers, and hit calculate!</p>
+
+            <h2>Minimum Sharpness</h2>
+
+            <ul>
+            <li>This refers to the minimum sharpness that you'll allow a weapon to reach, before sharpening</li>
+            <li>For instance, if set to "Green", the calculation will expect you to sharpen when your weapon reaches yellow sharpness</li>
+            <li>If the weapon's maximum sharpness is less than the selected sharpness, the calculator will assume you to sharpen the weapon as soon as it reaches the next lowest sharpness. I.E, If "Blue" is selected, but the maximum sharpness only goes up to green, it will expect you to sharpen at yellow</li>
+            <li>If nothing is selected, it defaults to "White"</li>
+            </ul>
+
+            <h1>What's new?</h1>
+
+            <h2>V 2.001</h2>
+            <ul>
+                <li>Added this about panel</li>
+            </ul>
+
+            <h2>V 2.0</h2>
+
+            <ul>
+            <li>There's now a second table where you can save weapons/armor setups</li>
+            <ul>
+            <li>Just click on a configuration to save it to the second table</li>
+            <li>Mousing over a saved configuration will display the modifiers active when it was added to the table</li>
+            </ul>
+            <li>More CSS changes. Site is now /less/ better looking on mobile. (Sorry)</li>
+            </ul>
+
+            <h2>V 1.01</h2>
+
+            <ul>
+            <li>Switch Axes now take power phial into account. (Because why would you use any other phial type)</li>
+            <li>Couple of CSS changes. Site should be very very slightly better looking on mobile.</li>
+            </ul>
+
+            <h1>To-do</h1>
+
+            <ul>
+            <li>Make the table update automatically when you change modifiers</li>
+            <li>Add a searchbox for the table</li>
+            <li>Finish up missing modifiers (Blunt edge, Razor sharp, others)</li>
+            <li>Compare weapons against a specific monster</li>
+            <li>Take Hunter Arts into account</li>
+            <li>Create the ability to export armor configurations to Athena's Armor Search</li>
+            <li>Take motion values into account</li>
+            <li>Gunner stuff maybe?</li>
+            </ul>
+
+            <h2>Credits</h2>
+
+            <p>All weapon data is pulled straight from <a href="http://mhgen.kiranico.com/">kiranico.</a></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
     <script type="text/template" id="weapon-type-template">
     	<select id="weapon-type-select" class="center-block">
@@ -141,7 +220,6 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.0/backbone-min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.5.6/backbone.marionette.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.2.0/list.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="//cdn.jsdelivr.net/bignumber.js/1.3.0/bignumber.min.js"></script>
     <script type="text/javascript" src="js/main.js"></script>

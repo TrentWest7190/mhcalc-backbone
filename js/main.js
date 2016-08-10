@@ -1,17 +1,18 @@
 BigNumber.config({ DECIMAL_PLACES: 3});
 
 var Calculator = {
-	Models : {},
-	Collections : {},
-	Views : {},
+	Models : {}, //Namespace for Backbone Models
+	Collections : {}, //Namespace for Backbone Collections
+	Views : {}, //Namespace for Backbone Views
 	modifierValues: {}, //a very, very simple implemenation of a hashmap to hold modifier values
-	selectedWeapons: {},
-	modifierNameList: [],
-	sharpnessValue: 0,
-	minSharpnessValue: 5,
-	maxLevelOnly: false,
-	critBoost: false,
-	weaponClass: "",
+	selectedWeapons: [], //Array containing Kiranico weapon objects to be calculated
+	modifierNameList: [], //Array containing all the names of active modifiers
+	sharpnessValue: 0, //Either 0, 1, or 2, corresponding to sharpness +0, +1, +2
+	minSharpnessValue: 5, //A value from 0-5 corresponding to the minimum level of sharpness selected, 0=red, 1=orange, etc
+	maxLevelOnly: false, //Boolean value for whether the calculate function should only look at max level weapons
+	critBoost: false, //Boolean value for whether the crit boost modifier is active
+	weaponClass: "", //String containing the name of the currently selected weapon class
+	specificLevelID: 0, //ID of the currently selected level for the currently selected weapon
 
 	init : function() {
 		initModels();
@@ -104,7 +105,8 @@ var Calculator = {
 			var weaponName = weapon.name;
 			maxLevel = weapon.levels.length;
 			_.each(weapon.levels, function(level) {
-				if ((Calculator.maxLevelOnly && (level.level == maxLevel)) || !Calculator.maxLevelOnly) {
+				if (((Calculator.maxLevelOnly && (level.level == maxLevel)) || !Calculator.maxLevelOnly)
+					&& ((Calculator.specificLevelID > 0 && Calculator.specificLevelID == level.id) || Calculator.specificLevelID == 0)) {
 					var returnObject = {};
 					returnObject.weaponName = weaponName + " - level " + level.level;
 					returnObject.attack = level.attack;
@@ -277,6 +279,14 @@ function initCollections() {
 
 		comparator: function(calcWeapon) {
 			return -calcWeapon.get("calcAttack");
+		},
+
+		filterByName: function(name) {
+			name = name.toLowerCase();
+			var filtered = this.filter(function (weapon) {
+				return weapon.get("weaponName").toLowerCase().indexOf(name) != -1;
+			});
+			return new Calculator.Collections.CalculatedWeaponCollection(filtered);
 		}
 	})
 }
@@ -327,7 +337,6 @@ function initViews() {
 				case "11":
 					weaponName = "InsectGlaives";
 					break;
-
 			}
 			Calculator.weaponClass = weaponName;
 			var weaponCollection = new Calculator.Collections.WeaponCollection();
@@ -362,8 +371,17 @@ function initViews() {
 			var weapon = _.find(this.collection.toJSON(), function(weapon) {
 				return weapon.id == weaponID;
 			});
-			var levelCollection = new Calculator.Collections.WeaponLevelCollection(weapon.levels);
-			var levelView = new Calculator.Views.LevelView({ collection: levelCollection});
+			if (weaponID > 0) {
+				Calculator.selectedWeapons = [];
+				Calculator.selectedWeapons.push(weapon);
+				var levelCollection = new Calculator.Collections.WeaponLevelCollection(weapon.levels);
+				var levelView = new Calculator.Views.LevelView({ collection: levelCollection});
+			} else {
+				Calculator.selectedWeapons = this.collection.toJSON();
+				Calculator.specificLevelID = 0;
+				$("#level-dd").empty();
+			}
+			
 		},
 
 		initialize: function() {
@@ -394,8 +412,11 @@ function initViews() {
 			var weaponInfo = _.find(this.collection.toJSON(), function(weaponLevel) {
 				return weaponLevel.id == weaponLevelID;
 			});
-			var weaponInfoModel = new Calculator.Models.WeaponInfo(weaponInfo);
-			var weaponInfoView = new Calculator.Views.WeaponInfoView({ model: weaponInfoModel});
+			if (weaponLevelID > 0) {
+				Calculator.specificLevelID = weaponLevelID;
+			} else {
+				Calculator.specificLevelID = 0;
+			}
 		},
 
 		initialize: function() {
@@ -509,7 +530,8 @@ function initViews() {
 
 		events: {
 			"click #compareClass": "compareWeapons",
-			"click input[type=checkbox]": "setMaxLevelOnly"
+			"click input[type=checkbox]": "setMaxLevelOnly",
+			"keyup #search-box": "filterResults"
 		},
 
 		compareWeapons: function() {
@@ -591,6 +613,17 @@ function initViews() {
 
 		render: function() {
 			this.collection.each(this.renderItem);
+		},
+
+		filterResults: function(event) {
+			//console.log(event.target.value)
+			if (this.collection) {
+				var searchCriteria = event.target.value;
+				var filteredResults = new Calculator.Collections.CalculatedWeaponCollection();
+				filteredResults = this.calcWeaponCollView.filterByName(searchCriteria)
+				filteredResults.render();
+			}
+			
 		}
 	});
 

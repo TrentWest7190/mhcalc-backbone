@@ -32,9 +32,13 @@ Select a weapon class, select modifiers, and hit calculate!
 - Make the table update automatically when you change modifiers
 - Compare weapons against a specific monster
 - Finish up missing modifiers (Blunt edge, Razor sharp, others)
+- Take hunter arts into account
 - Gunner stuff maybe?
 - Add an 'about' modal
 - Create the ability to export armor configurations to Athena's Armor Search
+
+## Known Bugs
+- Currently double clicking a row in the "Current Table" will cause the entry to dissappear, as well as mess with saving.
 
 ## Credits
 
