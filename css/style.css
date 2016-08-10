@@ -48,18 +48,13 @@ h1 {
 	margin: 0 auto;
 }
 
-#displayTable {
+.table-responsive {
+	background-color: #EBEBEB;
 	margin: 0;
 	border: 0;
-	background-color: #EBEBEB;
 	float:  left;
 	width: 50%;
-}
-
-.table-condensed {
-	/*width:50%; 
-    margin-left:25%; 
-    margin-right:25%;*/
+	margin-bottom: 20px;
 }
 
 .table {
@@ -114,6 +109,12 @@ td {
 
 #sharpnessDiv .col-md-6 {
 	padding-bottom: 1vh;
+}
+
+#aboutSection {    
+	position: fixed;
+    bottom: 0;
+    width: 100%;
 }
 
 select {

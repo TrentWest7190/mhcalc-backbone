@@ -1,9 +1,12 @@
+BigNumber.config({ DECIMAL_PLACES: 3});
+
 var Calculator = {
 	Models : {},
 	Collections : {},
 	Views : {},
 	modifierValues: {}, //a very, very simple implemenation of a hashmap to hold modifier values
 	selectedWeapons: {},
+	modifierNameList: [],
 	sharpnessValue: 0,
 	minSharpnessValue: 5,
 	maxLevelOnly: false,
@@ -49,7 +52,7 @@ var Calculator = {
 
 			//var attackNoSharpness = weapon.attack + (weapon.attack * .25 * (weapon.affinity/100));
 
-			weapon.calcAttack = Calculator.calculateDamage(attackNoSharpness, weapon.sharpness)
+			weapon.calcAttack = Calculator.calculateDamage(attackNoSharpness, weapon.sharpness);
 
 			return weapon;
 		});
@@ -199,6 +202,10 @@ function startCalculator() {
 
 	var critBoostView = new Calculator.Views.CritBoostView();
 
+	Calculator.savedWeapons = new Calculator.Collections.CalculatedWeaponCollection();
+
+	var savedWeaponView = new Calculator.Views.CalculatedWeaponCollectionView({ collection: Calculator.savedWeapons, el: "#saved-weapon-table"});
+
 }
 
 function initModels() {
@@ -266,7 +273,11 @@ function initCollections() {
 	});
 
 	Calculator.Collections.CalculatedWeaponCollection = Backbone.Collection.extend({
-		model: Calculator.Models.CalculatedWeapon
+		model: Calculator.Models.CalculatedWeapon,
+
+		comparator: function(calcWeapon) {
+			return -calcWeapon.get("calcAttack");
+		}
 	})
 }
 
@@ -428,11 +439,13 @@ function initViews() {
 			$(".group"+this.model.get("groupName")+"CB").prop('checked',false);
 			if (selected) {
 				console.log("setting", this.model.get("groupName"), "to", this.model.get("modifier"));
+				Calculator.modifierNameList[this.model.get("id")] = this.model.get("name");
 				$(event.target).prop('checked',true);
 				Calculator.modifierValues[this.model.get("groupName")] = this.model.get("modifier");
 			} else {
 				console.log("removing", this.model.get("groupName"));
 				Calculator.modifierValues[this.model.get("groupName")] = null;
+				Calculator.modifierNameList[this.model.get("id")] = null;
 			}
 
 		},
@@ -451,6 +464,7 @@ function initViews() {
 
 		setSharpness: function(event) {
 			Calculator.sharpnessValue = event.target.value;
+			Calculator.modifierNameList[52] = "Sharpness +" + Calculator.sharpnessValue;
 		}
 	});
 
@@ -464,7 +478,8 @@ function initViews() {
 		setMinSharpness: function(event) {
 			console.log("setting min sharpness to ", event.target.value);
 			Calculator.minSharpnessValue = event.target.value;
-
+			var sharpnessArray = ["Red","Orange","Yellow","Green","Blue","White"];
+			Calculator.modifierNameList[51] = "Minimum " + sharpnessArray[Calculator.minSharpnessValue] + " Sharpness";
 			if (event.target.value == "2" || event.target.value == "1" || event.target.value == "0") {
 				$("#sharpness-warning").empty();
 				$("#sharpness-warning").append("<h4 style='color: red'>There's a penalty for hitting too early/too late when in yellow or lower sharpness. Thus, using sharpness this low is not recommended.</h4>");
@@ -485,6 +500,7 @@ function initViews() {
 			var critBoostActive = event.target.value == "true" ? true : false;
 			console.log("critBoost:", critBoostActive);
 			Calculator.critBoost = critBoostActive;
+			Calculator.modifierNameList[50] = critBoostActive ? "Crit Boost" : null;
 		}
 	})
 
@@ -504,6 +520,8 @@ function initViews() {
 				var calcedWeaponModel = new Calculator.Models.CalculatedWeapon(calcedWeapon);
 				calcedWeaponCollection.add(calcedWeaponModel);
 			});
+			var calcWeaponCollView = new Calculator.Views.CalculatedWeaponCollectionView({ collection: calcedWeaponCollection});
+			calcWeaponCollView.render();
 		},
 
 		setMaxLevelOnly: function(event) {
@@ -515,6 +533,28 @@ function initViews() {
 	Calculator.Views.CalculatedWeaponView = Backbone.View.extend({
 		tagName : 'tr',
 		template: _.template($("#calc-weapon-row-template").html()),
+		attributes: function() {
+			return {
+				"data-toggle": "tooltip",
+				title: _.map(_.compact(Calculator.modifierNameList), function(mod) {return mod = " " + mod})
+			}
+		},
+
+		events: {
+			"click" : "saveWeapon"
+		},
+
+		saveWeapon: function(event) {
+			if(this.model.get("saved")) {
+				Calculator.savedWeapons.remove(this.model);
+				this.$el.empty();
+				this.model.set("saved", false);
+			} else {
+				this.model.set("saved", true);
+				Calculator.savedWeapons.add(this.model);
+				$('[data-toggle="tooltip"]').tooltip();
+			}
+		},
 
 		initialize: function() {
 			this.convertSharpness();
@@ -532,6 +572,25 @@ function initViews() {
 
 		render: function() {
 			this.$el.html(this.template({ weapon: this.model.toJSON(), weaponClass: Calculator.weaponClass }));
+		}
+	});
+
+	Calculator.Views.CalculatedWeaponCollectionView = Backbone.View.extend({
+		el: "#calc-weapon-table",
+
+		initialize: function() {
+			_.bindAll(this, "renderItem");
+			this.collection.on("add", this.renderItem, this);
+		},
+
+		renderItem: function(calcWeapon) {
+			var calculatedWeaponView = new Calculator.Views.CalculatedWeaponView({ model: calcWeapon });
+			calculatedWeaponView.render();
+			this.$el.append(calculatedWeaponView.el);
+		},
+
+		render: function() {
+			this.collection.each(this.renderItem);
 		}
 	});
 
