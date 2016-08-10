@@ -33,6 +33,7 @@ Select a weapon class, select modifiers, and hit calculate!
 - Compare weapons against a specific monster
 - Finish up missing modifiers (Blunt edge, Razor sharp, others)
 - Gunner stuff maybe?
+- Add an about modal
 
 ## Credits
 
