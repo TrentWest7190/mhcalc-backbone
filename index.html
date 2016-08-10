@@ -54,11 +54,12 @@
         <div class = "center-check">
             <input type="checkbox" value="maxLevelOnly"><span>Max Level Weapons Only</span>
         </div>
-        <input type="text" id="search-box" class = "center-block" placeholder="Search...">
+            
     </div>
     <div id = "displayTable" class = "panel table-responsive">
+        <input class="center-block searchBox" data-type="search" placeholder="Search...">
         <h3 class="text-center">Current Table</h3>
-        <table id= "calcedTable" class="table table-condensed tablesorter">
+        <table id= "calcedTable" class="table table-condensed tablesorter" data-toggle = "tooltip" title = "Click on a row to save it.">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -75,8 +76,9 @@
         </table>
     </div>
     <div id = "savedTableDiv" class = "panel table-responsive">
+        <input class="center-block searchBox" data-type="search" placeholder="Search...">
         <h3 class="text-center">Saved Weapons</h3>
-        <table id= "savedTable" class="table table-condensed tablesorter">
+        <table id= "savedTable" class="table table-condensed tablesorter" data-toggle = "tooltip" title = "Click on a row to remove it.">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -93,7 +95,7 @@
         </table>
     </div>
     <div id = "aboutSection">
-    	<span>Calculator by Trogg.</span>	<a href="https://github.com/TrentWest7190/mhcalc-backbone">GitHub</a>
+    	<span>Calculator by Trog(g).</span>	<a href="https://github.com/TrentWest7190/mhcalc-backbone">GitHub</a>
         <button id="about-button" type="button" class="btn btn-info" data-toggle="modal" data-target="#about-modal">About</button>
     </div>
     <div id="about-modal" class="modal fade" role="dialog">
@@ -102,16 +104,16 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Modal Header</h4>
+            <h4 class="modal-title">About</h4>
           </div>
           <div class="modal-body">
             <h1>Monster Hunter Generations Calculator</h1>
 
-            <p>Monster Hunter Generations weapon damage calculator in the backbone framework.</p>
+            <p class="text-center">Monster Hunter Generations weapon damage calculator in the backbone framework.</p>
 
             <h1>How To Use</h1>
 
-            <p>Select a weapon class, select modifiers, and hit calculate!</p>
+            <p class="text-center">Select a weapon class, select modifiers, and hit calculate!</p>
 
             <h2>Minimum Sharpness</h2>
 
@@ -124,9 +126,11 @@
 
             <h1>What's new?</h1>
 
-            <h2>V 2.001</h2>
+            <h2>V 2.01</h2>
             <ul>
                 <li>Added this about panel</li>
+                <li>Added a search bar to each table</li>
+                <li>Made the individual weapon and level dropdowns actually work</li>
             </ul>
 
             <h2>V 2.0</h2>
@@ -150,8 +154,8 @@
             <h1>To-do</h1>
 
             <ul>
+            <li>Add the ability to save weapon tables locally</li>
             <li>Make the table update automatically when you change modifiers</li>
-            <li>Add a searchbox for the table</li>
             <li>Finish up missing modifiers (Blunt edge, Razor sharp, others)</li>
             <li>Compare weapons against a specific monster</li>
             <li>Take Hunter Arts into account</li>
@@ -171,7 +175,7 @@
       </div>
     </div>
     <script type="text/template" id="weapon-type-template">
-    	<select id="weapon-type-select" class="center-block">
+        <select id="weapon-type-select" class="center-block" data-toggle="tooltip" title="Weapon Class. Required." data-placement="left">
     		<option value = "0"></option>
     		<% _.each(weaponTypes, function(type) { %>
     		<option value= "<%= type.id %>"><%= type.name %></option>
@@ -179,7 +183,7 @@
     	</select>
     </script>
     <script type="text/template" id="weapon-template">
-    	<select id="weapon-select" class='center-block'>
+    	<select id="weapon-select" class='center-block' data-toggle="tooltip" title="Individual Weapon. Leave Blank To Calculate Entire Weapon Class" data-placement="left">
     		<option value = "0"></option>
     		<% _.each(weapons, function(weapon) { %>
     		<option value= "<%= weapon.id %>"><%= weapon.strings[0].name %></option>
