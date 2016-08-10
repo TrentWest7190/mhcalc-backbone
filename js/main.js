@@ -569,27 +569,17 @@ function initViews() {
 		saveWeapon: function(event) {
 			if(this.model.get("saved")) {
 				Calculator.savedWeapons.remove(this.model);
-				this.$el.empty();
-				this.model.set("saved", false);
+				this.remove();
 			} else {
-				this.model.set("saved", true);
-				Calculator.savedWeapons.add(this.model);
+				var savedCopy = new Calculator.Models.CalculatedWeapon(this.model.toJSON());
+				savedCopy.set("saved", true);
+				Calculator.savedWeapons.add(savedCopy);
 				$('[data-toggle="tooltip"]').tooltip();
 			}
 		},
 
 		initialize: function() {
-			this.convertSharpness();
-		},
-
-		convertSharpness: function() {
-			var $returnDiv = $("<div>", {class: "sharpness-bar", style: "height: 10px"});
-
-			_.mapObject(this.model.get("sharpness"), function(val, key) {
-				$returnDiv.append($("<span>", {class: key, style: "width: " + val/5 + "px"}));
-			});
-			this.model.set("sharpnessBar", $returnDiv.prop("outerHTML"));
-			return $returnDiv;
+		
 		},
 
 		render: function() {
@@ -613,17 +603,6 @@ function initViews() {
 
 		render: function() {
 			this.collection.each(this.renderItem);
-		},
-
-		filterResults: function(event) {
-			//console.log(event.target.value)
-			if (this.collection) {
-				var searchCriteria = event.target.value;
-				var filteredResults = new Calculator.Collections.CalculatedWeaponCollection();
-				filteredResults = this.calcWeaponCollView.filterByName(searchCriteria)
-				filteredResults.render();
-			}
-			
 		}
 	});
 

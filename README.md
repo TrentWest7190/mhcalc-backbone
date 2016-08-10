@@ -37,9 +37,6 @@ Select a weapon class, select modifiers, and hit calculate!
 - Add an 'about' modal
 - Create the ability to export armor configurations to Athena's Armor Search
 
-## Known Bugs
-- Currently double clicking a row in the "Current Table" will cause the entry to dissappear, as well as mess with saving.
-
 ## Credits
 
 All weapon data is pulled straight from [kiranico.](http://mhgen.kiranico.com/)
