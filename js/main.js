@@ -11,6 +11,7 @@ var Calculator = {
 	minSharpnessValue: 5, //A value from 0-5 corresponding to the minimum level of sharpness selected, 0=red, 1=orange, etc
 	maxLevelOnly: false, //Boolean value for whether the calculate function should only look at max level weapons
 	critBoost: false, //Boolean value for whether the crit boost modifier is active
+	blunt: false, //Boolean value for whether the blunt modifier is active
 	weaponClass: "", //String containing the name of the currently selected weapon class
 	specificLevelID: 0, //ID of the currently selected level for the currently selected weapon
 
@@ -69,6 +70,13 @@ var Calculator = {
 										green: 1.05,
 										blue: 1.2,
 										white: 1.32};
+		var bluntAddtDamage = {
+										red: 30,
+										orange: 25,
+										yellow: 25,
+										green: 15,
+										blue: 0,
+										white: 0};;
 		var sharpnessTotal = new BigNumber(0);
 		var totalDamage = new BigNumber(0);
 		var finalDamageArray = [];
@@ -78,7 +86,11 @@ var Calculator = {
 			var sharpVal = sharpnessObject[sharpLevel];
 			var sharpMulti = sharpnessMultipliers[sharpLevel];
 			//var sharpAdjDamage = rawDamage * sharpVal * sharpMulti;
-			var sharpAdjDamage = rawDamage.times(sharpVal).times(sharpMulti);
+			if (Calculator.blunt) {
+				var sharpAdjDamage = rawDamage.plus(bluntAddtDamage[sharpLevel]).times(sharpVal).times(sharpMulti);
+			} else {
+				var sharpAdjDamage = rawDamage.times(sharpVal).times(sharpMulti);
+			}
 			if (sharpAdjDamage.equals(0)) {
 				maxSharpnessValue--;
 			}
@@ -203,6 +215,8 @@ function startCalculator() {
 	var minSharpnessView = new Calculator.Views.MinSharpnessView();
 
 	var critBoostView = new Calculator.Views.CritBoostView();
+
+	var bluntView = new Calculator.Views.BluntView();
 
 	Calculator.savedWeapons = new Calculator.Collections.CalculatedWeaponCollection();
 
@@ -506,7 +520,7 @@ function initViews() {
 			Calculator.modifierNameList[51] = "Minimum " + sharpnessArray[Calculator.minSharpnessValue] + " Sharpness";
 			if (event.target.value == "2" || event.target.value == "1" || event.target.value == "0") {
 				$("#sharpness-warning").empty();
-				$("#sharpness-warning").append("<h4 style='color: red'>There's a penalty for hitting too early/too late when in yellow or lower sharpness. Thus, using sharpness this low is not recommended.</h4>");
+				$("#sharpness-warning").append("<h4 style='color: red'>There's a penalty for hitting too early/too late when in yellow or lower sharpness. Thus, using sharpness this low is not recommended. Configurations with bludgeoner will be artificially inflated.</h4>");
 			} else {
 				$("#sharpness-warning").empty();
 			}
@@ -526,7 +540,22 @@ function initViews() {
 			Calculator.critBoost = critBoostActive;
 			Calculator.modifierNameList[50] = critBoostActive ? "Crit Boost" : null;
 		}
-	})
+	});
+
+	Calculator.Views.BluntView = Backbone.View.extend({
+		el: "#blunt",
+
+		events: {
+			"change input[type=radio]": "setBlunt"
+		},
+
+		setBlunt: function(event) {
+			var bluntActive = event.target.value == "true" ? true : false;
+			console.log("blunt:", bluntActive);
+			Calculator.blunt = bluntActive;
+			Calculator.modifierNameList[53] = bluntActive ? "Bludgeoner" : null;
+		}
+	});
 
 	Calculator.Views.ButtonView = Backbone.View.extend({
 		el: "#buttons",
