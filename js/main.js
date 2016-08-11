@@ -202,7 +202,9 @@ function startCalculator() {
 		success: function() {
 			_.each(modifierGroupCollection.toJSON(), function(modGroup) {
 				var modifierGroup = new Calculator.Models.ModifierGroup(modGroup);
-				$('[data-toggle="tooltip"]').tooltip();
+				$('[data-toggle="tooltip"]').tooltip({
+					trigger: 'hover'
+				});
 			});
 
 		}
@@ -356,7 +358,9 @@ function initViews() {
 			var weaponCollection = new Calculator.Collections.WeaponCollection();
 			weaponCollection.url = "data/weapons/"+weaponName+".json";
 			weaponView = new Calculator.Views.WeaponView({ collection: weaponCollection});
-			$('[data-toggle="tooltip"]').tooltip();
+			$('[data-toggle="tooltip"]').tooltip({
+				trigger: 'hover'
+			});
 		},
 
 		initialize: function() {
@@ -412,7 +416,9 @@ function initViews() {
 
 		render: function() {
 			this.$el.html(this.template({ weapons: this.collection.toJSON()}));
-			this.$('[data-toggle="tooltip"]').tooltip();
+			this.$('[data-toggle="tooltip"]').tooltip({
+				trigger: 'hover'
+			});
 		}
 	});
 
@@ -602,13 +608,16 @@ function initViews() {
 
 			if(this.model.get("saved")) {
 				Calculator.savedWeapons.remove(this.model);
+				$('.tooltip').remove();
 				this.remove();
 			} else {
 				var savedCopy = new Calculator.Models.CalculatedWeapon(this.model.toJSON());
 				savedCopy.set("saved", true);
 				Calculator.savedWeapons.add(savedCopy);
 				console.log("saved ", savedCopy);
-				$('[data-toggle="tooltip"]').tooltip();
+				$('[data-toggle="tooltip"]').tooltip({
+				trigger: 'hover'
+			});
 			}
 		},
 
