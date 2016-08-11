@@ -7,6 +7,7 @@ var Calculator = {
 	modifierValues: {}, //a very, very simple implemenation of a hashmap to hold modifier values
 	selectedWeapons: [], //Array containing Kiranico weapon objects to be calculated
 	modifierNameList: [], //Array containing all the names of active modifiers
+	calcWeaponsMods: [], //Array containing all the names of active modifiers at the time of pressing the calculate button
 	sharpnessValue: 0, //Either 0, 1, or 2, corresponding to sharpness +0, +1, +2
 	minSharpnessValue: 5, //A value from 0-5 corresponding to the minimum level of sharpness selected, 0=red, 1=orange, etc
 	maxLevelOnly: false, //Boolean value for whether the calculate function should only look at max level weapons
@@ -409,6 +410,7 @@ function initViews() {
 			var weapon = _.find(this.collection.toJSON(), function(weapon) {
 				return weapon.id == weaponID;
 			});
+			console.log(weapon);
 			if (weaponID > 0) {
 				Calculator.selectedWeapons = [];
 				Calculator.selectedWeapons.push(weapon);
@@ -599,6 +601,7 @@ function initViews() {
 			});
 			var calcWeaponCollView = new Calculator.Views.CalculatedWeaponCollectionView({ collection: calcedWeaponCollection, el: "#displayTable"});
 			calcWeaponCollView.render();
+			Calculator.calcWeaponsMods = Calculator.modifierNameList.slice();
 		},
 
 		setMaxLevelOnly: function(event) {
@@ -613,7 +616,7 @@ function initViews() {
 		attributes: function() {
 			return {
 				"data-toggle": "tooltip",
-				title: _.map(_.compact(Calculator.modifierNameList), function(mod) {return mod = " " + mod}),
+				title: _.map(_.compact(Calculator.calcWeaponsMods), function(mod) {return mod = " " + mod}),
 				"data-placement": "left"
 			}
 		},
