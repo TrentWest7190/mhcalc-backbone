@@ -30,17 +30,28 @@ var Calculator = {
 
 		//for each weapon in the weapon array
 		var finalWeaponValues = _.map(mappedWeapons, function(weapon) {
+			var bigNumberAttack = new BigNumber(weapon.attack);
+
 			//for each modifier in the modifier array
 			_.each(modifierArray, function(modifier) {
 				if (modifier != null) {
+					bigNumberAttack = bigNumberAttack.plus(modifier[0]);
+					weapon.affinity += modifier[1];
+					if (modifier[2]) bigNumberAttack = bigNumberAttack.times(modifier[2]);
+
+					/*
 					weapon.attack += modifier[0];
 					weapon.affinity += modifier[1];
 					if (modifier[2]) weapon.attack = weapon.attack * modifier[2];
+					*/
 				}
 			});
 
+			//set weapon attack to the bigNumber version.
+			weapon.attack = bigNumberAttack;
+
 			var critMultiplier = Calculator.critBoost ? .4 : .25;
-			var bigNumberAttack = new BigNumber(weapon.attack);
+			var bigNumberAttack = new BigNumber(weapon.attack.toFixed(10));
 			if (weapon.phial) {
 				bigNumberAttack = weapon.phial.type == "Power" ? bigNumberAttack.times(1.2) : bigNumberAttack;
 			}
@@ -142,9 +153,16 @@ var Calculator = {
 	createModArray: function(modifiersObject) {
 		var modifiersArray = [];
 
+		console.log(modifiersObject);
+
 		_.mapObject(modifiersObject, function(val, key) {
-			modifiersArray.push(val);
+			//Group 'G' are all multipliers, and as such must be done at the end of calculations.
+			if (key != "G") {
+				modifiersArray.push(val);
+			}
 		});
+
+		modifiersArray.push(modifiersObject["G"])
 
 		console.log("Created modifier array \n", modifiersArray);
 		return modifiersArray;
