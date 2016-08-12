@@ -2,6 +2,8 @@
 
 Monster Hunter Generations weapon damage calculator in the backbone framework.
 
+Use it here: http://trogg.net/MHCalc/
+
 # How To Use
 
 Select a weapon class, select modifiers, and hit calculate!
