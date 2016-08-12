@@ -25,9 +25,10 @@ h1 {
 
 #modifiers {
 	width: 110vh;
-	height: 40vh;
+	height: 45vh;
 	overflow-y: auto;
-	padding-top: 20px;
+	padding-top: 10px;
+	margin-bottom: 10px;
 }
 
 #sharpnessDiv {
@@ -36,6 +37,7 @@ h1 {
 
 #weaponDDPanel {
 	width: 30vh;
+	margin-bottom: 10px;
 }
 
 #buttons {

@@ -41,7 +41,7 @@ Select a weapon class, select modifiers, and hit calculate!
 
 *   Add the ability to save weapon tables locally
 *   Make the table update automatically when you change modifiers
-*   Finish up missing modifiers (Razor sharp, polar hunter, tropic hunter, others)
+*   Finish up missing modifiers (Razor sharp, others)
 *   Compare weapons against a specific monster
 *   Take Hunter Arts into account
 *   Create the ability to export armor configurations to Athena's Armor Search

@@ -54,7 +54,7 @@
 		"modifier":[25,0]
 	}, {
 		"id":10,
-		"name":"Exciteshroom (Mycology)",
+		"name":"Exciteshorrom (Mycology)",
 		"modifier":[10,0]
 	}, {
 		"id":11,
@@ -111,10 +111,30 @@
 	}]
 },
 {
+	"group": "K",
+	"modifiers": [{
+		"id": 26,
+		"name":"Polar Hunter (Cold Area)",
+		"modifier":[10,0]
+	}, {
+		"id": 27,
+		"name":"Polar Hunter (Cold Drink)",
+		"modifier":[5,0]
+	}, {
+		"id": 28,
+		"name":"Polar Hunter (Cold Area + Cold Drink)",
+		"modifier":[15,0]
+	}, {
+		"id": 29,
+		"name":"Tropic Hunter (Hot Area)",
+		"modifier":[15,0]
+	}]
+},
+{
 	"group": "M",
 	"modifiers": [{
 		"id":20,
-		"name":"Crisis",
+		"name":"Resucitate",
 		"modifier":[20,0]
 	}]
 },
@@ -148,13 +168,5 @@
 		"id":25,
 		"name":"Repeat Offender",
 		"modifier":[0,30]
-	}]
-},
-{
-	"group": "R",
-	"modifiers": [{
-		"id":26,
-		"name":"Furor",
-		"modifier":[20,0]
 	}]
 }]
