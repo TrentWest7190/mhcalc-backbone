@@ -425,11 +425,13 @@ function initViews() {
 		},
 
 		initialize: function() {
+			$("#loadingText").append("Loading Weapons...")
 			var that = this;
 			this.collection.fetch({
 				success: function() {
 					Calculator.selectedWeapons = that.collection.toJSON();
 					that.render();
+					$("#loadingText").empty();
 				}
 			});
 		},
