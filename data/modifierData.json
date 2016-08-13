@@ -115,7 +115,7 @@
 	"modifiers": [{
 		"id": 26,
 		"name":"Polar Hunter (Cold Area)",
-		"modifier":[10,0]
+		"modifier":[15,0]
 	}, {
 		"id": 27,
 		"name":"Polar Hunter (Cold Drink)",
@@ -123,7 +123,7 @@
 	}, {
 		"id": 28,
 		"name":"Polar Hunter (Cold Area + Cold Drink)",
-		"modifier":[15,0]
+		"modifier":[20,0]
 	}, {
 		"id": 29,
 		"name":"Tropic Hunter (Hot Area)",
