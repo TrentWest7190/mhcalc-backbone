@@ -11,93 +11,108 @@
     <meta name="description" content="A weapon damage calculator for Monster Hunter Generations">
 </head>
 <body>
-	<h1>MHGen Damage Calculator</h1>
-    
-	<div id = "weaponDDPanel" class="panel panel-default center">
-		<div id = "weaponDiv" class="row">
-			<div id = "type-dd" class="col-md-12 center-block"></div>
-			<div data-toggle="tooltip" title="" id = "weapon-dd" class="col-md-12"><span id = "loadingText" class="center-block"></span></div>
-		    <div data-toggle="tooltip" title="" id = "level-dd" class="col-md-12"></div>
-	    </div>		
-    </div>	
-    <div id = "weapon-info"></div>
-    <div id = "modifiers" class="panel panel-default center container-fluid"></div>
-    <div id = "sharpnessDiv" class = "panel panel-default container-fluid">
-    	<div class = "row">
-		    <div id = "sharpness-picker" class = "col-md-6">
-		    	<h3>Sharpness +</h3>
-		        <input type="radio" name="sharpnessRB" value="0">Sharpness +0
-		        <input type="radio" name="sharpnessRB" value="1">Sharpness +1
-		        <input type="radio" name="sharpnessRB" value="2">Sharpness +2
-		    </div>
-		    <div data-toggle = "tooltip" title="Minimum sharpness you will allow a weapon to reach before sharpening" id = "minimum-sharpness" class = "col-md-6">
-		    	<h3>Minimum Sharpness</h3>
-		    	<input type="radio" name="minimumsharpnessRB" value="0">Red
-		    	<input type="radio" name="minimumsharpnessRB" value="1">Orange
-		    	<input type="radio" name="minimumsharpnessRB" value="2">Yellow
-		    	<input type="radio" name="minimumsharpnessRB" value="3">Green
-		    	<input type="radio" name="minimumsharpnessRB" value="4">Blue
-		    	<input type="radio" name="minimumsharpnessRB" value="5">White
-		    	<div id="sharpness-warning"></div>
-		    </div>
-	    </div>
-	    <div class = "row">
-	    	<div id = "crit-boost" class = "col-md-6" data-toggle = "tooltip" title = "Crit damage increased from 1.25 to 1.4">
-	    		<h3>Crit Boost</h3>
-	    		<input type="radio" name="critBoostRB" value="true">On
-	    		<input type="radio" name="critBoostRB" value="false">Off
-	    	</div>
-	    	<div id = "blunt" class = "col-md-6" data-toggle = "tooltip" title = "+15 raw damage when in green sharpness, +25 when in yellow, +30 when in orange/red">
-                <h3>Bludgeoner</h3>
-                <input type="radio" name="bluntRB" value="true">On
-                <input type="radio" name="bluntRB" value="false">Off
-            </div>
-	    </div>
-    </div>
-    <div id = "buttons">
-        <button id = "compareClass" class="center-block">Compare!</button>
-        <div class = "center-check">
-            <input type="checkbox" value="maxLevelOnly"><span>Max Level Weapons Only</span>
+    <div class="row">
+        <div class="col-md-12">
+	       <h1 class=text-center>MHGen Damage Calculator</h1>
         </div>
-            
     </div>
-    <div id = "displayTable" class = "panel table-responsive">
-        <input class="center-block searchBox" data-type="search" placeholder="Search...">
-        <h3 class="text-center">Current Table</h3>
-        <table id= "calcedTable" class="table table-condensed tablesorter" data-toggle = "tooltip" title = "Click on a row to save it.">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Attack</th>
-                    <th>Affinity</th>
-                    <th>Calculated Attack</th>
-                    <th>Element</th>
-                    <th>Sharpness</th>
-                    <th>Phial</th>
-                </tr>
-            </thead>
-            <tbody id="calc-weapon-table" class="weapon-table">
-            </tbody>
-        </table>
+
+    <div class="row">
+    	<div id = "weaponDDPanel" class="panel panel-default col-md-2 col-md-offset-5">
+    		<div id = "weaponDiv" class="row">
+    			<div id = "type-dd" class="col-md-12 center-block"></div>
+    			<div data-toggle="tooltip" title="" id = "weapon-dd" class="col-md-12"><span id = "loadingText" class="center-block"></span></div>
+    		    <div data-toggle="tooltip" title="" id = "level-dd" class="col-md-12"></div>
+    	    </div>		
+        </div>
     </div>
-    <div id = "savedTableDiv" class = "panel table-responsive">
-        <input class="center-block searchBox" data-type="search" placeholder="Search...">
-        <h3 class="text-center">Saved Weapons</h3>
-        <table id= "savedTable" class="table table-condensed tablesorter" data-toggle = "tooltip" title = "Click on a row to remove it.">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Attack</th>
-                    <th>Affinity</th>
-                    <th>Calculated Attack</th>
-                    <th>Element</th>
-                    <th>Sharpness</th>
-                    <th>Phial</th>
-                </tr>
-            </thead>
-            <tbody id="saved-weapon-table" class="weapon-table">
-            </tbody>
-        </table>
+
+    <div class="row">
+        <div id = "modifiers" class="panel panel-default container-fluid col-md-6 col-md-offset-3"></div>
+    </div>
+
+    <div class="row">
+        <div id = "sharpnessDiv" class = "panel panel-default container-fluid col-md-6 col-md-offset-3">
+        	<div class = "row">
+        	    <div id = "sharpness-picker" class = "col-md-6">
+        	    	<h3>Sharpness +</h3>
+        	        <input type="radio" name="sharpnessRB" value="0">Sharpness +0
+        	        <input type="radio" name="sharpnessRB" value="1">Sharpness +1
+        	        <input type="radio" name="sharpnessRB" value="2">Sharpness +2
+        	    </div>
+        	    <div data-toggle = "tooltip" title="Minimum sharpness you will allow a weapon to reach before sharpening" id = "minimum-sharpness" class = "col-md-6">
+        	    	<h3>Minimum Sharpness</h3>
+        	    	<input type="radio" name="minimumsharpnessRB" value="0">Red
+        	    	<input type="radio" name="minimumsharpnessRB" value="1">Orange
+        	    	<input type="radio" name="minimumsharpnessRB" value="2">Yellow
+        	    	<input type="radio" name="minimumsharpnessRB" value="3">Green
+        	    	<input type="radio" name="minimumsharpnessRB" value="4">Blue
+        	    	<input type="radio" name="minimumsharpnessRB" value="5">White
+        	    	<div id="sharpness-warning"></div>
+        	    </div>
+            </div>
+            <div class = "row">
+            	<div id = "crit-boost" class = "col-md-6" data-toggle = "tooltip" title = "Crit damage increased from 1.25 to 1.4">
+            		<h3>Crit Boost</h3>
+            		<input type="radio" name="critBoostRB" value="true">On
+            		<input type="radio" name="critBoostRB" value="false">Off
+            	</div>
+            	<div id = "blunt" class = "col-md-6" data-toggle = "tooltip" title = "+15 raw damage when in green sharpness, +25 when in yellow, +30 when in orange/red">
+                    <h3>Bludgeoner</h3>
+                    <input type="radio" name="bluntRB" value="true">On
+                    <input type="radio" name="bluntRB" value="false">Off
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div id = "buttons" class="col-md-12">
+            <button id = "compareClass" class="center-block">Compare!</button>
+            <div class = "center-check text-center">
+                <input type="checkbox" value="maxLevelOnly"><span>Max Level Weapons Only</span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id = "displayTable" class = "panel panel-default table-responsive col-md-6">
+            <input class="center-block searchBox" data-type="search" placeholder="Search...">
+            <h3 class="text-center">Current Table</h3>
+            <table id= "calcedTable" class="table table-condensed tablesorter" data-toggle = "tooltip" title = "Click on a row to save it.">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Attack</th>
+                        <th>Affinity</th>
+                        <th>Calculated Attack</th>
+                        <th>Element</th>
+                        <th>Sharpness</th>
+                        <th>Phial</th>
+                    </tr>
+                </thead>
+                <tbody id="calc-weapon-table" class="weapon-table">
+                </tbody>
+            </table>
+        </div>
+        <div id = "savedTableDiv" class = "panel panel-default table-responsive col-md-6">
+            <input class="center-block searchBox" data-type="search" placeholder="Search...">
+            <h3 class="text-center">Saved Weapons</h3>
+            <table id= "savedTable" class="table table-condensed tablesorter" data-toggle = "tooltip" title = "Click on a row to remove it.">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Attack</th>
+                        <th>Affinity</th>
+                        <th>Calculated Attack</th>
+                        <th>Element</th>
+                        <th>Sharpness</th>
+                        <th>Phial</th>
+                    </tr>
+                </thead>
+                <tbody id="saved-weapon-table" class="weapon-table">
+                </tbody>
+            </table>
+        </div>
     </div>
     <div id = "aboutSection">
     	<span>Calculator by Trog(g).</span>	<a href="https://github.com/TrentWest7190/mhcalc-backbone">GitHub</a>
@@ -204,7 +219,7 @@
         </select>
     </script>
     <script type="text/template" id="modifier-template">
-        <input type="checkbox" class="group<%= groupName %>CB" name="Group <%= groupName %>" value="<%= modifier %>"><span data-toggle="tooltip" title="Attack +<%= modifier[0] %>, Affinity +<%= modifier[1] %><% if (modifier[2]) { %>, Attack x<%= modifier[2] %><% } %>"><%= name %></span>
+        <input type="checkbox" class="group<%= groupName %>CB" name="Group <%= groupName %>" value="<%= modifier %>"><span data-toggle="tooltip" title="Attack +<%= modifier['attack'] %>, Affinity +<%= modifier['affinity'] %><% if (modifier['attackMulti']) { %>, Attack x<%= modifier['attackMulti'] %><% } %>"><%= name %></span>
 
     </script>
     <script type="text/template" id="calc-weapon-row-template">

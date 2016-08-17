@@ -32,21 +32,33 @@ var Calculator = {
 		//for each weapon in the weapon array
 		var finalWeaponValues = _.map(mappedWeapons, function(weapon) {
 			var bigNumberAttack = new BigNumber(weapon.attack);
+			var multiplierStorage;
+			var elementModStorage = [];
 
 			//for each modifier in the modifier array
 			_.each(modifierArray, function(modifier) {
 				if (modifier != null) {
-					bigNumberAttack = bigNumberAttack.plus(modifier[0]);
-					weapon.affinity += modifier[1];
-					if (modifier[2]) bigNumberAttack = bigNumberAttack.times(modifier[2]);
+					bigNumberAttack = bigNumberAttack.plus(modifier["attack"]);
+					weapon.affinity += modifier["affinity"];
+					if (modifier["attackMulti"] > 0) multiplierStorage = modifier["attackMulti"];
 
 					/*
 					weapon.attack += modifier[0];
 					weapon.affinity += modifier[1];
 					if (modifier[2]) weapon.attack = weapon.attack * modifier[2];
 					*/
+
+					//Store all the elemental modifiers in another array to deal with later
+					if (modifier.element.elementType > 0) {
+						elementModStorage.push(modifier);
+					}
 				}
 			});
+
+			//have to do multiplication last
+			if (multiplierStorage) {
+				bigNumberAttack = bigNumberAttack.times(multiplierStorage);
+			}
 
 			//set weapon attack to the bigNumber version.
 			weapon.attack = bigNumberAttack;
@@ -67,6 +79,22 @@ var Calculator = {
 			//var attackNoSharpness = weapon.attack + (weapon.attack * .25 * (weapon.affinity/100));
 
 			weapon.calcAttack = Calculator.calculateDamage(attackNoSharpness, weapon.sharpness);
+
+			console.log("elementModStorage", elementModStorage);
+			//---------CALCULATE ELEMENTAL DAMAGE---------
+			_.each(elementModStorage, function(modifier) {
+
+				_.each(weapon.element, function(element) {
+					console.log(element.elementID,  modifier.element.elementType)
+					if (element.elementID == modifier.element.elementType) {
+						if (modifier.element.elementMulti > 0) {
+							element.value = element.value * modifier.element.elementMulti;
+						
+						}
+						element.value += modifier.element.elementPlus;
+					}
+				});
+			});
 
 			return weapon;
 		});
@@ -174,6 +202,7 @@ var Calculator = {
 
 		_.each(elements, function(element) {
 			var singleElement = {};
+			singleElement.elementID = element.pivot.element_id;
 			singleElement.elementName = Calculator.getElementName(element.pivot.element_id);
 			singleElement.value = element.pivot.value;
 			elementData.push(singleElement);
@@ -474,7 +503,7 @@ function initViews() {
 	});
 
 	Calculator.Views.ModifiersView = Backbone.View.extend({
-		className: "col-md-3",
+		//className: "col-md-3",
 		initialize: function() {
 			_.bindAll(this, "renderItem");
 		},
