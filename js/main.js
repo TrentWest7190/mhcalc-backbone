@@ -405,6 +405,10 @@ function initViews() {
 			Calculator.weaponClass = weaponName;
 			var weaponCollection = new Calculator.Collections.WeaponCollection();
 			weaponCollection.url = "data/weapons/"+weaponName+".json";
+			console.log(typeof weaponView);
+			if (typeof weaponView != "undefined") {
+				weaponView.remove();
+			}
 			weaponView = new Calculator.Views.WeaponView({ collection: weaponCollection});
 			$('[data-toggle="tooltip"]').tooltip({
 				trigger: 'hover'
@@ -435,6 +439,7 @@ function initViews() {
 		},
 
 		selectWeapon: function(event) {
+			console.log(this.collection.toJSON());
 			var weaponID = event.target.value;
 			var weapon = _.find(this.collection.toJSON(), function(weapon) {
 				return weapon.id == weaponID;
@@ -470,6 +475,13 @@ function initViews() {
 			this.$('[data-toggle="tooltip"]').tooltip({
 				trigger: 'hover'
 			});
+			this.delegateEvents();
+		},
+
+		remove: function() {
+			this.$el.empty().off(); /* off to unbind the events */
+	      	this.stopListening();
+	      	return this;
 		}
 	});
 
